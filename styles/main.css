@@ -895,6 +895,10 @@ html[data-theme="light"] .moon-icon {
   gap: 2.5rem;
 }
 
+.survey-gallery-grid {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
 .gallery-item {
   position: relative;
   border-radius: 12px;
@@ -948,6 +952,13 @@ html[data-theme="light"] .moon-icon {
 .patent-layout {
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+.patent-layout-reverse {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
   gap: 5rem;
   align-items: center;
 }
@@ -1097,6 +1108,14 @@ html[data-theme="light"] .moon-icon {
   flex-direction: column;
   gap: 3rem;
   max-width: 850px;
+  margin: 0 auto;
+}
+
+.publications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2.5rem;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -1858,7 +1877,7 @@ html[data-theme="light"] .moon-icon {
     grid-template-columns: repeat(2, 1fr);
   }
   
-  .patent-layout {
+  .patent-layout, .patent-layout-reverse {
     grid-template-columns: 1fr;
     gap: 3.5rem;
   }
@@ -1917,7 +1936,7 @@ html[data-theme="light"] .moon-icon {
     flex-direction: column;
   }
   
-  .gallery-grid {
+  .gallery-grid, .survey-gallery-grid {
     grid-template-columns: 1fr;
   }
   
@@ -1927,6 +1946,11 @@ html[data-theme="light"] .moon-icon {
   
   .skills-grid {
     grid-template-columns: 1fr;
+  }
+
+  .publications-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .hobbies-grid {
@@ -1957,6 +1981,10 @@ html[data-theme="light"] .moon-icon {
   
   .highlight-item {
     text-align: center;
+  }
+
+  .logo {
+    font-size: 1.1rem;
   }
 }
 
