@@ -21,8 +21,8 @@
 /* Dark Theme Variables (Default) */
 html[data-theme="dark"] {
   --bg-primary: #0b0c10;
-  --bg-secondary: #12141c;
-  --bg-tertiary: #1a1d29;
+  --bg-secondary: rgba(18, 20, 28, 0.75);
+  --bg-tertiary: rgba(26, 29, 41, 0.75);
   --bg-glass: rgba(18, 20, 28, 0.75);
   --bg-glass-card: rgba(26, 29, 41, 0.55);
   
@@ -48,8 +48,8 @@ html[data-theme="dark"] {
 /* Light Theme Variables */
 html[data-theme="light"] {
   --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f1f5f9;
+  --bg-secondary: rgba(255, 255, 255, 0.75);
+  --bg-tertiary: rgba(241, 245, 249, 0.75);
   --bg-glass: rgba(255, 255, 255, 0.85);
   --bg-glass-card: rgba(255, 255, 255, 0.75);
   
@@ -96,6 +96,8 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   transition: background-color var(--transition-normal), color var(--transition-normal);
+  position: relative;
+  z-index: 0;
 }
 
 /* Custom Selection & Scrollbar */
@@ -140,6 +142,69 @@ img {
   max-width: 100%;
   height: auto;
   display: block;
+}
+
+/* ==========================================================================
+   MORPHING BACKGROUND BLOBS
+   ========================================================================== */
+.morph-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.morph-blob {
+  position: absolute;
+  filter: blur(80px);
+  opacity: 0.5;
+  animation: morph 12s ease-in-out infinite alternate, float 20s linear infinite;
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+}
+
+.morph-blob.blob-1 {
+  top: -10%;
+  left: -10%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, var(--accent-honey-glow) 0%, transparent 70%);
+  animation-delay: 0s;
+}
+
+.morph-blob.blob-2 {
+  bottom: -20%;
+  right: -10%;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, var(--accent-crop-glow) 0%, transparent 70%);
+  animation-delay: -4s;
+}
+
+.morph-blob.blob-3 {
+  top: 40%;
+  left: 60%;
+  width: 45vw;
+  height: 45vw;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+  animation-delay: -8s;
+}
+
+@keyframes morph {
+  0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  33% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  66% { border-radius: 50% 30% 40% 60% / 40% 50% 60% 30%; }
+  100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  33% { transform: translate(3vw, -5vh) rotate(120deg) scale(1.1); }
+  66% { transform: translate(-2vw, 3vh) rotate(240deg) scale(0.9); }
+  100% { transform: translate(0, 0) rotate(360deg) scale(1); }
 }
 
 ul {
@@ -782,6 +847,8 @@ html[data-theme="light"] .moon-icon {
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .research-card::before {
@@ -1136,6 +1203,8 @@ html[data-theme="light"] .moon-icon {
   padding: 2.5rem;
   transition: all var(--transition-normal);
   position: relative;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .conf-card:hover {
