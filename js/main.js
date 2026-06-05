@@ -55,24 +55,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ==========================================================================
-  // 3. INTERSECTION OBSERVER FOR SCROLL REVEALS (80ms STAGGER)
+  // 3. INTERSECTION OBSERVER FOR SCROLL REVEALS
   // ==========================================================================
   const revealElements = document.querySelectorAll(".reveal");
-
-  let staggerDelay = 0;
-  let staggerTimer = null;
 
   const revealObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.style.transitionDelay = `${staggerDelay}ms`;
         entry.target.classList.add("active");
-        
-        staggerDelay += 80;
-        
-        clearTimeout(staggerTimer);
-        staggerTimer = setTimeout(() => { staggerDelay = 0; }, 100);
-
         // Stop observing once revealed
         observer.unobserve(entry.target);
       }
