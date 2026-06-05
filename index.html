@@ -28,10 +28,13 @@
   <meta name="theme-color" content="#0b0c10" media="(prefers-color-scheme: dark)" />
   <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
   
-  <!-- Google Fonts: Outfit (headings), Plus Jakarta Sans (body), JetBrains Mono (monospaced) -->
+  <!-- Google Fonts: Cormorant Garamond (headings), DM Sans (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+  
+  <!-- Inline SVG Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c8860a'><path d='M12 2.25l9 5v9.5l-9 5-9-5v-9.5z'/></svg>" />
 
   <link rel="stylesheet" href="styles/main.css" />
 
@@ -174,12 +177,8 @@
         <ul class="nav-list">
           <li><a href="#about" class="nav-link">About</a></li>
           <li><a href="#research" class="nav-link">Research</a></li>
-          <li><a href="#species" class="nav-link">Species Spotlight</a></li>
           <li><a href="#publications" class="nav-link">Publications</a></li>
-          <li><a href="#patent" class="nav-link">Patent</a></li>
           <li><a href="#conferences" class="nav-link">Conferences</a></li>
-          <li><a href="#skills" class="nav-link">Skills</a></li>
-          <li><a href="#hobbies" class="nav-link">Hobbies</a></li>
           <li><a href="#contact" class="nav-link">Contact</a></li>
         </ul>
       </nav>
@@ -201,14 +200,31 @@
 
   <!-- Hero Section -->
   <section class="hero-section" id="hero">
-    <div class="hero-bg" style="background-image: linear-gradient(to bottom, rgba(11, 12, 16, 0.7), rgba(11, 12, 16, 0.95)), url('assets/stingless-bee.png');"></div>
+    <!-- Honeycomb SVG Pattern Background -->
+    <div class="hero-bg" style="background-color: var(--bg-primary);">
+      <svg class="honeycomb-pattern" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="honeycomb" patternUnits="userSpaceOnUse" width="56" height="98" viewBox="0 0 56 98">
+            <path d="M28 0L56 16.5v33L28 66L0 49.5v-33L28 0z" fill="none" stroke="var(--amber)" stroke-width="1" stroke-opacity="0.1"/>
+            <path d="M28 98L56 81.5v-33L28 32L0 48.5v33L28 98z" fill="none" stroke="var(--amber)" stroke-width="1" stroke-opacity="0.1"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#honeycomb)" />
+      </svg>
+      <!-- Gradient overlay to fade bottom into body -->
+      <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 30%; background: linear-gradient(to top, var(--bg-primary), transparent);"></div>
+    </div>
+    
     <div class="container hero-content">
-      <div class="hero-text reveal">
+      <div class="hero-text">
         <span class="hero-tag">M.Sc. Research Scholar &amp; Innovator</span>
-        <h1 class="hero-name">Souvik Mohanty</h1>
-        <p class="hero-tagline">Exploring insect behaviour, bee biology, and sustainable agricultural technologies in Northeast India.</p>
+        <h1 class="hero-name" style="font-family: var(--font-heading); font-style: italic;">
+          <span class="word-stagger" style="--w-delay: 0.1s">Souvik</span> 
+          <span class="word-stagger" style="--w-delay: 0.3s">Mohanty</span>
+        </h1>
+        <p class="hero-tagline animate-fade-up" style="animation-delay: 0.6s; animation-fill-mode: backwards;">Exploring insect behaviour, bee biology, and sustainable agricultural technologies in Northeast India.</p>
         
-        <div class="hero-meta">
+        <div class="hero-meta animate-fade-up" style="animation-delay: 0.8s; animation-fill-mode: backwards;">
           <div class="meta-item">
             <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -223,23 +239,23 @@
             <span>Manipur, Northeast India</span>
           </div>
         </div>
-
-        <div class="hero-actions">
-          <a href="#contact" class="btn btn-primary">Get in Touch</a>
-          <a href="#research" class="btn btn-secondary">View Research</a>
+        
+        <div class="hero-actions animate-fade-up" style="animation-delay: 1.0s; animation-fill-mode: backwards;">
+          <a href="#research" class="btn btn-primary">Explore Research</a>
+          <a href="#contact" class="btn btn-secondary">Get in Touch</a>
         </div>
       </div>
-      
-      <!-- Profile Card on Hero -->
-      <div class="hero-card-container reveal">
+
+      <!-- Keep photo as is, animate it too -->
+      <div class="hero-card-container animate-fade-up" style="animation-delay: 0.6s; animation-fill-mode: backwards;">
         <div class="hero-profile-card">
           <div class="card-img-wrapper">
-            <img src="assets/bee-nesting-work.jpg" alt="Souvik Mohanty studying nesting architecture" class="card-img" />
+            <img src="assets/bee-nesting-work.jpg" alt="Souvik Mohanty in the field inspecting stingless bee nesting structures" class="card-img" />
             <div class="card-img-overlay"></div>
           </div>
           <div class="card-info">
-            <h3>Field Research</h3>
-            <p>Studying the nesting architecture of stingless bees in split bamboo hives, Imphal, Manipur.</p>
+            <h3>Souvik Mohanty</h3>
+            <p>Passionate about Meliponiculture and IPM</p>
           </div>
         </div>
       </div>
@@ -533,38 +549,51 @@
       <div class="section-header reveal">
         <span class="subtitle">Focus Species Spotlight</span>
         <h2 class="title">Tetragonula srikantanathi &amp; Honey Benefits</h2>
-        <div class="title-underline"></div>
-      </div>
-
-      <div class="patent-layout patent-layout-reverse reveal">
+        <div class="title-underline"></d      <div class="patent-layout patent-layout-reverse reveal">
         <div class="patent-details">
           <div class="patent-badge" style="background-color: var(--accent-crop); box-shadow: 0 0 12px var(--accent-crop-glow);">Taxonomic Profile</div>
-          <h3 class="patent-title" style="font-family: var(--font-heading); font-size: 2rem; color: var(--text-primary); margin-bottom: 0.5rem;">The Wild Stingless Bee</h3>
-          <p class="patent-meta" style="color: var(--accent-honey); font-family: var(--font-mono); font-size: 0.9rem; margin-bottom: 1.5rem;">Species: Tetragonula srikantanathi</p>
-          
+          <h3 class="species-name">Tetragonula srikantanathi</h3>
           <p class="patent-desc" style="font-size: 1rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
-            Native to the dense forest reserves and remote valleys of Northeast India, <em>T. srikantanathi</em> is a key generalist pollinator. My research represents the first comprehensive biological documentation of this species, examining its developmental stages, foraging behaviors, and nesting structures.
+            Native to the dense forest reserves and remote valleys of Northeast India, this wild stingless bee is a key generalist pollinator. My research represents the first comprehensive biological documentation of this species.
           </p>
 
-          <h4 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1rem;">Medicinal Honey Benefits ("Putka" / Dammar Honey)</h4>
-          <ul class="patent-features" style="display: flex; flex-direction: column; gap: 1.25rem; list-style-type: none; padding-left: 0;">
-            <li style="position: relative; padding-left: 2rem; font-size: 0.95rem; color: var(--text-secondary);">
-              <span class="bullet-glow" style="background-color: var(--accent-crop); box-shadow: 0 0 8px var(--accent-crop-glow);"></span>
-              <strong>Rich Bioactive Compounds:</strong> Packed with twice the concentration of phenolic compounds, organic acids, and flavonoids compared to standard honeybee (Apis) honey, yielding superior antioxidant potential.
-            </li>
-            <li style="position: relative; padding-left: 2rem; font-size: 0.95rem; color: var(--text-secondary);">
-              <span class="bullet-glow" style="background-color: var(--accent-crop); box-shadow: 0 0 8px var(--accent-crop-glow);"></span>
-              <strong>Strong Antibacterial &amp; Healing Action:</strong> High concentrations of naturally occurring hydrogen peroxide and organic acids make it a potent topical treatment for skin lesions, sore throats, and eye therapies.
-            </li>
-            <li style="position: relative; padding-left: 2rem; font-size: 0.95rem; color: var(--text-secondary);">
-              <span class="bullet-glow" style="background-color: var(--accent-crop); box-shadow: 0 0 8px var(--accent-crop-glow);"></span>
-              <strong>Trehalulose Sugar (Low-Glycemic):</strong> Naturally rich in trehalulose—a rare sugar characterized by slow absorption, providing a lower glycemic load and protecting oral health.
-            </li>
-            <li style="position: relative; padding-left: 2rem; font-size: 0.95rem; color: var(--text-secondary);">
-              <span class="bullet-glow" style="background-color: var(--accent-crop); box-shadow: 0 0 8px var(--accent-crop-glow);"></span>
-              <strong>Tangy Acid-Balanced Taste:</strong> Features a unique sweet-sour flavor profile due to natural fermentation by crop-associated lactic acid bacteria.
-            </li>
-          </ul>
+          <h4 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 600; color: var(--cream); margin-bottom: 1rem;">"Putka" Honey Benefits</h4>
+          <div class="benefits-grid">
+            <div class="benefit-tile">
+              <svg class="benefit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <h5 class="benefit-title">Antioxidant</h5>
+              <p class="benefit-desc">Rich in phenolic compounds and flavonoids.</p>
+            </div>
+            <div class="benefit-tile">
+              <svg class="benefit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              <h5 class="benefit-title">Antibacterial</h5>
+              <p class="benefit-desc">Potent natural healing action.</p>
+            </div>
+            <div class="benefit-tile">
+              <svg class="benefit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h5 class="benefit-title">Trehalulose</h5>
+              <p class="benefit-desc">Low-glycemic rare sugar.</p>
+            </div>
+          </div>
+          
+          <div class="chart-container reveal">
+            <h4 class="chart-title">Daily Foraging Activity</h4>
+            <div class="bar-chart">
+              <div class="bar-wrapper"><div class="bar" style="height: 10%;"></div><span class="bar-label">7 AM</span></div>
+              <div class="bar-wrapper"><div class="bar" style="height: 30%;"></div><span class="bar-label">9 AM</span></div>
+              <div class="bar-wrapper"><div class="bar peak-bar" style="height: 90%;"></div><span class="bar-label" style="color:var(--amber); font-weight:600;">11 AM</span></div>
+              <div class="bar-wrapper"><div class="bar peak-bar" style="height: 100%;"></div><span class="bar-label" style="color:var(--amber); font-weight:600;">1 PM</span></div>
+              <div class="bar-wrapper"><div class="bar" style="height: 60%;"></div><span class="bar-label">3 PM</span></div>
+              <div class="bar-wrapper"><div class="bar" style="height: 20%;"></div><span class="bar-label">5 PM</span></div>
+            </div>
+          </div>
+        </div>
         </div>
 
         <div class="patent-visual">
@@ -588,105 +617,75 @@
       <div class="timeline-container publications-grid">
         
         <!-- Paper 1 -->
-        <div class="conf-card reveal reveal-delay-1" style="display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div class="conf-header" style="margin-bottom: 1rem;">
-              <span class="conf-label label-youth" style="background-color: rgba(16, 185, 129, 0.1); color: var(--accent-crop); border-color: rgba(16, 185, 129, 0.2);">Research Article</span>
-              <span class="conf-date">2026</span>
+        <div class="pub-card reveal">
+          <!-- Paper title Snapshot -->
+          <div class="pub-visual">
+            <img src="assets/paper-ipm-maize.jpg" alt="Journal of Entomological Research paper on Maize fall armyworm IPM" loading="lazy" />
+          </div>
+          <div class="pub-content">
+            <div class="pub-header">
+              <span class="conf-label label-youth" style="background-color: rgba(200, 134, 10, 0.1); color: var(--amber); border-color: rgba(200, 134, 10, 0.2);">Research Article</span>
+              <span class="conf-date" style="color: var(--amber); font-weight: 600;">2026</span>
             </div>
-            
-            <!-- Paper title Snapshot -->
-            <div class="conf-visual" style="margin-top: 0; margin-bottom: 1.5rem; border-radius: 8px; overflow: hidden; aspect-ratio: 16 / 9;">
-              <img src="assets/paper-ipm-maize.jpg" alt="Journal of Entomological Research paper on Maize fall armyworm IPM by Souvik Mohanty title snapshot" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy" />
-            </div>
-
-            <h3 class="conf-title" style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.75rem;">
-              <a href="https://www.researchgate.net/profile/Souvik-Mohanty-3/research" target="_blank" rel="noopener" class="paper-title-link">
+            <h3 class="pub-title">
+              <a href="https://www.researchgate.net/profile/Souvik-Mohanty-3/research" target="_blank" rel="noopener">
                 Evaluation of IPM modules against Maize fall armyworm (Spodoptera frugiperda) in Northern Punjab
               </a>
             </h3>
-            
-            <p style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--accent-honey); margin-bottom: 0.5rem;">
-              Journal of Entomological Research, 50(1): 47-50
-            </p>
-            <p style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted); margin-bottom: 1rem;">
-              DOI: 10.65521/jer.v50.i1.2026.44
-            </p>
-            
-            <p class="conf-abstract" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.5rem;">
+            <p class="pub-meta">Journal of Entomological Research, 50(1): 47-50</p>
+            <p class="pub-doi">DOI: 10.65521/jer.v50.i1.2026.44</p>
+            <p class="pub-abstract">
               Co-authored evaluation of integrated pest management modules designed specifically for controlling fall armyworm infestations in maize crops within the environmental conditions of Northern Punjab.
             </p>
           </div>
-
-
         </div>
 
         <!-- Paper 2 -->
-        <div class="conf-card reveal reveal-delay-2" style="display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div class="conf-header" style="margin-bottom: 1rem;">
-              <span class="conf-label label-youth" style="background-color: rgba(245, 158, 11, 0.1); color: var(--accent-honey); border-color: rgba(245, 158, 11, 0.2);">Review Article</span>
-              <span class="conf-date">2025</span>
+        <div class="pub-card reveal">
+          <!-- Paper title Snapshot -->
+          <div class="pub-visual">
+            <img src="assets/paper-regenerative.jpg" alt="Regenerative Agriculture review paper" loading="lazy" />
+          </div>
+          <div class="pub-content">
+            <div class="pub-header">
+              <span class="conf-label label-youth" style="background-color: rgba(200, 134, 10, 0.1); color: var(--amber); border-color: rgba(200, 134, 10, 0.2);">Review Article</span>
+              <span class="conf-date" style="color: var(--amber); font-weight: 600;">2025</span>
             </div>
-            
-            <!-- Paper title Snapshot -->
-            <div class="conf-visual" style="margin-top: 0; margin-bottom: 1.5rem; border-radius: 8px; overflow: hidden; aspect-ratio: 16 / 9;">
-              <img src="assets/paper-regenerative.jpg" alt="Regenerative Agriculture review paper in the International Journal of Research in Agronomy title snapshot" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy" />
-            </div>
-
-            <h3 class="conf-title" style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.75rem;">
-              <a href="https://www.researchgate.net/profile/Souvik-Mohanty-3/research" target="_blank" rel="noopener" class="paper-title-link">
+            <h3 class="pub-title">
+              <a href="https://www.researchgate.net/profile/Souvik-Mohanty-3/research" target="_blank" rel="noopener">
                 Regenerative agriculture: Opportunities and challenges: A review
               </a>
             </h3>
-            
-            <p style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--accent-honey); margin-bottom: 0.5rem;">
-              International Journal of Research in Agronomy, 8(5): 651-656
-            </p>
-            <p style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted); margin-bottom: 1rem;">
-              DOI: 10.33545/2618060X.2025.v8.i5i.2960
-            </p>
-            
-            <p class="conf-abstract" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.5rem;">
+            <p class="pub-meta">International Journal of Research in Agronomy, 8(5): 651-656</p>
+            <p class="pub-doi">DOI: 10.33545/2618060X.2025.v8.i5i.2960</p>
+            <p class="pub-abstract">
               A review examining the paradigms, opportunities, and barriers surrounding sustainable soil restoration and regenerative farming practices, co-authored during studies in Punjab.
             </p>
           </div>
-
-
         </div>
 
         <!-- Paper 3 -->
-        <div class="conf-card reveal reveal-delay-3" style="display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div class="conf-header" style="margin-bottom: 1rem;">
-              <span class="conf-label label-congress" style="background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; border-color: rgba(59, 130, 246, 0.2);">Review Article</span>
-              <span class="conf-date">2025</span>
+        <div class="pub-card reveal">
+          <!-- Paper title Snapshot -->
+          <div class="pub-visual">
+            <img src="assets/paper-faw-review.jpg" alt="Acta Scientific Agriculture paper" loading="lazy" />
+          </div>
+          <div class="pub-content">
+            <div class="pub-header">
+              <span class="conf-label label-congress" style="background-color: rgba(200, 134, 10, 0.1); color: var(--amber); border-color: rgba(200, 134, 10, 0.2);">Review Article</span>
+              <span class="conf-date" style="color: var(--amber); font-weight: 600;">2025</span>
             </div>
-            
-            <!-- Paper title Snapshot -->
-            <div class="conf-visual" style="margin-top: 0; margin-bottom: 1.5rem; border-radius: 8px; overflow: hidden; aspect-ratio: 16 / 9;">
-              <img src="assets/paper-faw-review.jpg" alt="Acta Scientific Agriculture paper on sustainable control of fall armyworm in maize title snapshot" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy" />
-            </div>
-
-            <h3 class="conf-title" style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.75rem;">
-              <a href="https://www.researchgate.net/profile/Souvik-Mohanty-3/research" target="_blank" rel="noopener" class="paper-title-link">
+            <h3 class="pub-title">
+              <a href="https://www.researchgate.net/profile/Souvik-Mohanty-3/research" target="_blank" rel="noopener">
                 Towards Sustainable Control of Fall Armyworm in Maize: An Overview of Management Practices
               </a>
             </h3>
-            
-            <p style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--accent-honey); margin-bottom: 0.5rem;">
-              Acta Scientific AGRICULTURE, 9(12)
-            </p>
-            <p style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted); margin-bottom: 1rem;">
-              ISSN: 2581-365X
-            </p>
-            
-            <p class="conf-abstract" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.5rem;">
+            <p class="pub-meta">Acta Scientific AGRICULTURE, 9(12)</p>
+            <p class="pub-doi">ISSN: 2581-365X</p>
+            <p class="pub-abstract">
               A comprehensive review outlining biological, chemical, cultural, and mechanical management protocols aimed at sustainable control of Spodoptera frugiperda in maize crops.
             </p>
           </div>
-
-
         </div>
 
       </div>
@@ -1137,9 +1136,13 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="container footer-content">
+      <div class="footer-links">
+        <a href="https://scholar.google.com/citations?hl=en&amp;user=-AwTda0AAAAJ" target="_blank" rel="noopener" class="footer-link">Google Scholar</a>
+        <a href="https://www.researchgate.net/profile/Souvik-Mohanty-3" target="_blank" rel="noopener" class="footer-link">ResearchGate</a>
+        <a href="https://orcid.org/0009-0003-6958-6994" target="_blank" rel="noopener" class="footer-link">ORCID</a>
+        <a href="https://in.linkedin.com/in/souvik-mohanty-7132a2198" target="_blank" rel="noopener" class="footer-link">LinkedIn</a>
+      </div>
       <p class="copyright">&copy; 2026 Souvik Mohanty. All rights reserved.</p>
-      <p class="footer-subtext">Designed for Agricultural Research &amp; Insect Behavior Studies.</p>
-      <p class="last-updated" id="last-updated-date">Last updated: June 2026</p>
     </div>
   </footer>
 
