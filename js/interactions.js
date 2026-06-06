@@ -43,7 +43,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 2. Typewriter Effect (Replaces Rotating Text)
-  if (typeof gsap !== 'undefined' && gsap.plugins.text) {
+  if (typeof gsap !== 'undefined') {
+    if (typeof TextPlugin !== 'undefined') {
+      gsap.registerPlugin(TextPlugin);
+    }
+    
     const words = ["sustainable agriculture", "pollinator ecology", "pest management", "innovative farming"];
     let currentIndex = 0;
     const typeWriterEl = document.querySelector('.typewriter-text');
