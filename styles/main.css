@@ -15,18 +15,18 @@
 
   /* Spacing */
   --container-max-width: 1200px;
-  --section-padding: 6.5rem;
+  --section-padding: 10rem;
 }
 
 /* Dark Theme Variables (Default) */
 html[data-theme="dark"] {
   --bg-primary: #0b0c10;
-  --bg-secondary: rgba(18, 20, 28, 0.75);
-  --bg-tertiary: rgba(26, 29, 41, 0.75);
-  --bg-glass: rgba(18, 20, 28, 0.75);
-  --bg-glass-card: rgba(26, 29, 41, 0.55);
+  --bg-secondary: rgba(18, 20, 28, 0.4);
+  --bg-tertiary: rgba(26, 29, 41, 0.4);
+  --bg-glass: rgba(18, 20, 28, 0.4);
+  --bg-glass-card: rgba(26, 29, 41, 0.3);
   
-  --border-color: rgba(255, 255, 255, 0.07);
+  --border-color: rgba(255, 255, 255, 0.04);
   --border-glow: rgba(245, 158, 11, 0.15);
   
   --text-primary: #f1f5f9;
@@ -161,7 +161,7 @@ img {
 .morph-blob {
   position: absolute;
   filter: blur(80px);
-  opacity: 0.5;
+  opacity: 0.15;
   animation: morph 12s ease-in-out infinite alternate, float 20s linear infinite;
   border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
 }
@@ -320,7 +320,7 @@ button, input, textarea {
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 2rem;
+  padding: 3rem;
   box-shadow: 0 8px 32px var(--shadow-primary);
   transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
 }
@@ -635,7 +635,7 @@ html[data-theme="light"] .moon-icon {
 .about-grid {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
-  gap: 5rem;
+  gap: 6rem;
   align-items: start;
 }
 
@@ -835,8 +835,8 @@ html[data-theme="light"] .moon-icon {
 .research-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  margin-bottom: 4.5rem;
+  gap: 4rem;
+  margin-bottom: 6rem;
 }
 
 .research-card {
@@ -1183,7 +1183,7 @@ html[data-theme="light"] .moon-icon {
 .publications-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2.5rem;
+  gap: 4rem;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -1202,7 +1202,7 @@ html[data-theme="light"] .moon-icon {
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 2.5rem;
+  padding: 3rem;
   transition: all var(--transition-normal);
   position: relative;
   backdrop-filter: blur(12px);
@@ -1943,7 +1943,7 @@ html[data-theme="light"] .moon-icon {
 
 @media (max-width: 1024px) {
   :root {
-    --section-padding: 4.5rem;
+    --section-padding: 6rem;
   }
   
   .hero-name {
