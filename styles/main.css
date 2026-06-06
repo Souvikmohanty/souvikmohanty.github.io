@@ -2200,17 +2200,21 @@ html[data-theme="light"] .moon-icon {
   font-size: 3rem;
   color: var(--text-primary);
   margin: 0;
+  opacity: 0; /* Prevent flash before JS runs */
 }
 
 /* 2. Rotating Text (Inline Grid Alignment) */
 .rotating-text-wrapper {
   display: inline-grid;
   grid-template-columns: 1fr;
-  align-items: center;
+  align-items: baseline;
   color: var(--accent-honey);
   font-weight: 600;
   text-align: left;
-  vertical-align: middle;
+  vertical-align: bottom;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+  overflow: hidden;
 }
 .rotating-text-word {
   grid-row-start: 1;
