@@ -42,50 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 2. Custom Cursor
-  const cursor = document.querySelector('.custom-cursor');
-  const follower = document.querySelector('.custom-cursor-follower');
-  
-  if (cursor && follower) {
-    let posX = 0, posY = 0;
-    let mouseX = 0, mouseY = 0;
-    
-    gsap.to({}, 0.016, {
-      repeat: -1,
-      onRepeat: () => {
-        posX += (mouseX - posX) / 9;
-        posY += (mouseY - posY) / 9;
-        
-        gsap.set(follower, {
-          css: { left: posX - 15, top: posY - 15 }
-        });
-        gsap.set(cursor, {
-          css: { left: mouseX - 4, top: mouseY - 4 }
-        });
-      }
-    });
-
-    document.addEventListener("mousemove", (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-
-    // Hover effect on links and buttons
-    const interactiveElements = document.querySelectorAll('a, button, .btn, .glass-card, .conf-card');
-    
-    interactiveElements.forEach(el => {
-      el.addEventListener('mouseenter', () => {
-        cursor.classList.add('active');
-        follower.classList.add('active');
-      });
-      el.addEventListener('mouseleave', () => {
-        cursor.classList.remove('active');
-        follower.classList.remove('active');
-      });
-    });
-  }
-
-  // 3. Rotating Text Words
+  // 2. Rotating Text Words
   const rotatingWords = document.querySelectorAll('.rotating-text-word');
   if (rotatingWords.length > 0) {
     let currentIndex = 0;
@@ -101,25 +58,5 @@ document.addEventListener("DOMContentLoaded", () => {
       nextWord.classList.remove('out');
       nextWord.classList.add('active');
     }, 3000);
-  }
-
-  // 4. Marquee Scroll Direction
-  let lastScrollY = window.scrollY;
-  const marqueeContent = document.querySelector('.marquee-content');
-  
-  if (marqueeContent) {
-    window.addEventListener('scroll', () => {
-      const currentScrollY = window.scrollY;
-      
-      if (currentScrollY > lastScrollY) {
-        // Scrolling down
-        marqueeContent.style.animationDirection = 'normal';
-      } else {
-        // Scrolling up
-        marqueeContent.style.animationDirection = 'reverse';
-      }
-      
-      lastScrollY = currentScrollY;
-    }, { passive: true });
   }
 });
