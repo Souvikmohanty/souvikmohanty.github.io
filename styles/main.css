@@ -2212,6 +2212,11 @@ html[data-theme="light"] .moon-icon {
 }
 
 /* 2. Typewriter Effect */
+.typewriter-container {
+  display: inline-block;
+  min-width: 14em; /* Fits "sustainable agriculture" without jumping */
+  text-align: left;
+}
 .typewriter-text {
   color: var(--accent-honey);
   font-weight: 700;
