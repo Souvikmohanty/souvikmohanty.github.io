@@ -501,7 +501,7 @@ html[data-theme="light"] .moon-icon {
 }
 
 .hero-text {
-  max-width: 900px;
+  max-width: 100%;
 }
 
 .hero-tag {
@@ -527,7 +527,7 @@ html[data-theme="light"] .moon-icon {
 }
 
 .hero-tagline {
-  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-size: clamp(0.85rem, 1.6vw, 1.15rem);
   color: var(--text-secondary);
   line-height: 1.5;
   margin-bottom: 2rem;
@@ -536,6 +536,7 @@ html[data-theme="light"] .moon-icon {
 
 @media (max-width: 768px) {
   .hero-tagline {
+    font-size: clamp(0.95rem, 3.5vw, 1.15rem);
     white-space: normal;
   }
 }
