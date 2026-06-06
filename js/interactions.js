@@ -42,21 +42,35 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 2. Rotating Text Words
-  const rotatingWords = document.querySelectorAll('.rotating-text-word');
-  if (rotatingWords.length > 0) {
+  // 2. Typewriter Effect (Replaces Rotating Text)
+  if (typeof gsap !== 'undefined' && gsap.plugins.text) {
+    const words = ["sustainable agriculture", "pollinator ecology", "pest management", "innovative farming"];
     let currentIndex = 0;
+    const typeWriterEl = document.querySelector('.typewriter-text');
     
-    setInterval(() => {
-      const currentWord = rotatingWords[currentIndex];
-      currentWord.classList.remove('active');
-      currentWord.classList.add('out');
-      
-      currentIndex = (currentIndex + 1) % rotatingWords.length;
-      
-      const nextWord = rotatingWords[currentIndex];
-      nextWord.classList.remove('out');
-      nextWord.classList.add('active');
-    }, 3000);
+    if (typeWriterEl) {
+      // Start the infinite timeline
+      const typeTl = gsap.timeline({ repeat: -1 });
+
+      words.forEach((word) => {
+        // Type the word
+        typeTl.to(typeWriterEl, {
+          duration: 1.5,
+          text: word,
+          ease: "none",
+          delay: 0.5 // Delay before typing starts
+        });
+        
+        // Wait reading time
+        typeTl.to({}, { duration: 1.5 });
+        
+        // Delete the word
+        typeTl.to(typeWriterEl, {
+          duration: 1,
+          text: "",
+          ease: "none"
+        });
+      });
+    }
   }
 });
