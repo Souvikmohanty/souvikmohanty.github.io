@@ -127,10 +127,10 @@ export function Header({ onOpenCv }: HeaderProps) {
         <motion.div
           animate={{ rotate: [-1.5, 1.5, -1.5] }}
           transition={{ duration: 4.8, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute left-1 sm:left-2 bottom-0 flex items-end gap-0.5 origin-bottom"
+          className="absolute left-0.5 sm:left-2 bottom-0 flex items-end gap-0.5 origin-bottom"
         >
-          <PixelLilyBloom variant="siroi" className="w-9 h-9 sm:w-11 sm:h-11" />
-          <PixelLilyBloom variant="white" className="w-7 h-7 sm:w-8 sm:h-8 -ml-2 opacity-95" />
+          <PixelLilyBloom variant="siroi" className="w-7 h-7 sm:w-11 sm:h-11" />
+          <PixelLilyBloom variant="white" className="w-5 h-5 sm:w-8 sm:h-8 -ml-2 opacity-95" />
         </motion.div>
 
         {/* Left-center trailing lily vine (visible across wide header blank gap) */}
@@ -172,11 +172,11 @@ export function Header({ onOpenCv }: HeaderProps) {
       </div>
 
       {/* ================= FOREGROUND HEADER CONTENT ================= */}
-      <div className="relative z-10 max-w-[1200px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-8">
+      <div className="relative z-10 max-w-[1200px] mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2 sm:gap-6 lg:gap-8">
         {/* Zone 1: Wordmark with subtle lily emblem */}
         <a
           href="#top"
-          className="inline-flex items-center gap-2 font-pixel text-xl sm:text-2xl font-bold tracking-tight text-[#142419] whitespace-nowrap shrink-0 pl-7 sm:pl-10 lg:pl-8 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2F7D32]"
+          className="inline-flex items-center gap-1.5 font-pixel text-[17px] sm:text-2xl font-bold tracking-tight text-[#142419] whitespace-nowrap shrink-0 pl-6 sm:pl-10 lg:pl-8 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2F7D32]"
         >
           <span>Souvik Mohanty</span>
         </a>
@@ -219,20 +219,20 @@ export function Header({ onOpenCv }: HeaderProps) {
         </nav>
 
         {/* Zone 3: 1 primary action */}
-        <div className="flex items-center gap-3 shrink-0 sm:pr-10 lg:pr-8">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0 sm:pr-10 lg:pr-8">
           <button
             type="button"
             onClick={onOpenCv}
-            className="inline-flex items-center gap-2 px-4 py-2 font-mono-tabular text-xs font-bold text-[#142419] bg-[#E59A00] hover:bg-[#D18B00] border-2 border-[#142419] rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#142419]"
+            className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 font-mono-tabular text-[11px] sm:text-xs font-bold text-[#142419] bg-[#E59A00] hover:bg-[#D18B00] border-2 border-[#142419] rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#142419]"
           >
-            <FileDown className="w-4 h-4 shrink-0" aria-hidden="true" />
+            <FileDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" aria-hidden="true" />
             <span>Download CV</span>
           </button>
 
           <button
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
-            className="md:hidden inline-flex items-center justify-center w-10 h-10 border border-[#D8E2D5] bg-[#FAF9F5]/90 rounded-md text-[#142419] hover:bg-[#EFECE2] transition-colors cursor-pointer"
+            className="md:hidden inline-flex items-center justify-center w-9 h-9 border border-[#D8E2D5] bg-[#FAF9F5]/90 rounded-md text-[#142419] hover:bg-[#EFECE2] transition-colors shrink-0 cursor-pointer"
             aria-label={mobileMenuOpen ? 'Close menu' : 'Open navigation menu'}
             aria-expanded={mobileMenuOpen}
           >

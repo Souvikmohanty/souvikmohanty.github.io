@@ -1,14 +1,16 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { useRef, useState } from 'react';
+import { motion, useMotionValueEvent, useScroll, useTransform } from 'motion/react';
 import { ArrowDown, BookOpen, Camera, Mail, Sparkles } from 'lucide-react';
 import {
   PixelBeeIcon,
   PixelPatentSealIcon,
   PixelResearcher,
+  PixelStopProp,
   PixelTrophyIcon,
 } from './PixelSprites';
 
 export type BridgeVariant =
+  | 'hero-to-walk'
   | 'lab-to-library'
   | 'library-to-awards'
   | 'awards-to-album'
@@ -25,6 +27,14 @@ const BRIDGE_META: Record<
     pillBorder: string;
   }
 > = {
+  'hero-to-walk': {
+    chapterTag: '01',
+    kicker: 'STEPPING ONTO THE FIELD TRAIL',
+    title: '6 Stops · LPU Punjab to CAU Imphal',
+    bgClass: 'bg-transparent',
+    accentColor: '#2E7D32',
+    pillBorder: 'shadow-[4px_4px_0_#2E7D32]',
+  },
   'lab-to-library': {
     chapterTag: '02',
     kicker: 'SURFACING FROM M.SC. THESIS LAB',
@@ -62,10 +72,17 @@ const BRIDGE_META: Record<
 export function ChapterBridge({ variant }: { variant: BridgeVariant }) {
   const bridgeRef = useRef<HTMLDivElement>(null);
   const meta = BRIDGE_META[variant];
+  const [walkStride, setWalkStride] = useState<1 | 2>(1);
 
   const { scrollYProgress } = useScroll({
     target: bridgeRef,
     offset: ['start 95%', 'end 20%'],
+  });
+
+  // Drive live pixel walking stride directly from scroll progress for hero-to-walk
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    if (variant !== 'hero-to-walk') return;
+    setWalkStride(Math.floor(latest * 18) % 2 === 0 ? 1 : 2);
   });
 
   // Scroll-choreographed 3D transforms (compositor-only: transform & opacity)
@@ -78,15 +95,19 @@ export function ChapterBridge({ variant }: { variant: BridgeVariant }) {
   const ribbonScaleX = useTransform(scrollYProgress, [0.05, 0.82], [0.04, 1]);
   const climbY = useTransform(scrollYProgress, [0, 0.5, 1], [16, -12, 8]);
   const bobWaveY = useTransform(scrollYProgress, [0, 0.5, 1], [10, -10, 6]);
+  const walkBounceY = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.4, 0.6, 0.8, 1],
+    [0, -8, 0, -8, 0, -4]
+  );
   const parallaxTilt = useTransform(scrollYProgress, [0, 1], [-8, 8]);
 
   return (
     <div
       ref={bridgeRef}
       aria-hidden="true"
-      className={`relative overflow-hidden py-9 sm:py-12 ${meta.bgClass}`}
+      className={`relative overflow-hidden py-8 sm:py-11 ${meta.bgClass}`}
     >
-      {/* Subtle botanical stitched transition markers top & bottom */}
       <div className="max-w-[1160px] mx-auto px-4 sm:px-6 relative flex flex-col items-center">
         {/* Scroll-Drawn 3D Path Track */}
         <div className="relative w-full max-w-2xl h-16 flex items-center justify-center mb-3">
@@ -103,7 +124,35 @@ export function ChapterBridge({ variant }: { variant: BridgeVariant }) {
           <span className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[#FFFDF7] border-2 border-[#18261C] rotate-45" />
           <span className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[#FFFDF7] border-2 border-[#18261C] rotate-45" />
 
-          {/* Variant-specific floating sprites moving across the track on scroll */}
+          {/* Hero -> Field Walk: Animated Pixel Souvik jogging across the meadow with bee & net */}
+          {variant === 'hero-to-walk' && (
+            <>
+              <motion.div
+                style={{ x: runnerX, y: walkBounceY }}
+                className="relative z-10 flex items-end gap-1.5"
+              >
+                <div className="w-12 h-14">
+                  <PixelResearcher
+                    stridePhase={walkStride}
+                    isInspecting={false}
+                    className="w-full h-full"
+                  />
+                </div>
+                <div className="animate-bee-hover mb-8">
+                  <PixelBeeIcon className="w-6 h-6" />
+                </div>
+              </motion.div>
+
+              <motion.div
+                style={{ x: oppositeX, y: bobWaveY, rotate: parallaxTilt }}
+                className="absolute right-10 sm:right-16 pointer-events-none"
+              >
+                <PixelStopProp specimenId="entomology-net" className="w-9 h-9" />
+              </motion.div>
+            </>
+          )}
+
+          {/* Lab -> Library */}
           {variant === 'lab-to-library' && (
             <>
               <motion.div
@@ -126,6 +175,7 @@ export function ChapterBridge({ variant }: { variant: BridgeVariant }) {
             </>
           )}
 
+          {/* Library -> Awards */}
           {variant === 'library-to-awards' && (
             <>
               <motion.div
@@ -143,6 +193,7 @@ export function ChapterBridge({ variant }: { variant: BridgeVariant }) {
             </>
           )}
 
+          {/* Awards -> Photo Book */}
           {variant === 'awards-to-album' && (
             <>
               <motion.div
@@ -165,6 +216,7 @@ export function ChapterBridge({ variant }: { variant: BridgeVariant }) {
             </>
           )}
 
+          {/* Photo Book -> Contact */}
           {variant === 'album-to-contact' && (
             <>
               <motion.div

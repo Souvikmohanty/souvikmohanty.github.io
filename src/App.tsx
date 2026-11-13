@@ -55,6 +55,8 @@ export default function App() {
         <main className="relative z-10 flex-1">
           <HeroSection onStartWalk={handleStartWalk} />
 
+          <ChapterBridge variant="hero-to-walk" />
+
           <FieldWalkSection
             onSelectSpecimen={(specimen, milestoneTitle) =>
               setSelectedSpecimen({ specimen, milestoneTitle })

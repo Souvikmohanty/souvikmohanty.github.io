@@ -556,8 +556,10 @@ export function MastersResearchSection() {
     offset: ['start 25%', 'end 75%'],
   });
   const vineWalkerY = useTransform(expeditionProgress, [0, 1], [8, 290]);
+  const mobileWalkerX = useTransform(expeditionProgress, [0, 1], ['2%', '81%']);
+  const mobileWalkerY = useTransform(expeditionProgress, [0, 1], [0, 8]);
 
-  useMotionValueEvent(expeditionProgress, 'change', () => {
+  const triggerClimb = () => {
     setIsClimbing(true);
     if (climbTimeoutRef.current !== null) {
       window.clearTimeout(climbTimeoutRef.current);
@@ -565,7 +567,10 @@ export function MastersResearchSection() {
     climbTimeoutRef.current = window.setTimeout(() => {
       setIsClimbing(false);
     }, 150);
-  });
+  };
+
+  useMotionValueEvent(dropProgress, 'change', triggerClimb);
+  useMotionValueEvent(expeditionProgress, 'change', triggerClimb);
 
   useEffect(() => {
     if (!isClimbing) {
@@ -795,24 +800,83 @@ export function MastersResearchSection() {
         </motion.div>
       </div>
 
-      {/* ================= MOBILE STICKY CHAPTER INDICATOR ================= */}
-      <div className="md:hidden sticky top-16 z-20 bg-[#FFFDF7] border-y-2 border-[#18261C] px-4 py-2">
-        <div className="flex items-center justify-between gap-2">
+      {/* ================= MOBILE STICKY EXPEDITION CLIMBER & TRAIL ================= */}
+      <div className="md:hidden sticky top-16 z-20 bg-[#FAF9F5]/95 backdrop-blur-sm border-b-2 border-[#C8D8C2] px-3 pt-1.5 pb-2 shadow-[0_4px_12px_rgba(24,38,28,0.06)]">
+        {/* Live Scroll-Driven Souvik + Bee Descending the Sloped Bamboo Vine */}
+        <div className="relative h-14 w-full overflow-hidden">
+          {/* Sloping Bamboo Vine Track */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-3 bottom-3 h-2 rounded-full bg-[#E6DEC8] border border-[#18261C]/70 overflow-hidden rotate-[1.8deg] origin-left"
+          >
+            <motion.div
+              style={{ scaleX: expeditionProgress, originX: 0 }}
+              className="w-full h-full bg-gradient-to-r from-[#2E7D32] to-[#4CAF50]"
+            />
+          </div>
+
+          {/* Bamboo node ticks */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-4 bottom-2.5 flex items-center justify-between pointer-events-none"
+          >
+            <span className="w-1.5 h-3 bg-[#8D6E63] border border-[#18261C] rounded-xs" />
+            <span className="w-1.5 h-3 bg-[#8D6E63] border border-[#18261C] rounded-xs translate-y-[4px]" />
+            <span className="w-1.5 h-3 bg-[#8D6E63] border border-[#18261C] rounded-xs translate-y-[8px]" />
+          </div>
+
+          {/* Animated Walking/Descending Pixel Souvik + Bee */}
+          <motion.div
+            style={{ x: mobileWalkerX, y: mobileWalkerY }}
+            className="w-full h-full pointer-events-none flex items-start"
+          >
+            <div className="flex items-start">
+              <div className="w-10 h-11 shrink-0">
+                <PixelResearcher
+                  stridePhase={stridePhase}
+                  isInspecting={!isClimbing}
+                  className="w-full h-full"
+                />
+              </div>
+              <div className="animate-bee-hover -ml-2 mt-0.5 shrink-0">
+                <PixelBeeIcon className="w-4 h-4" />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Open-Air Non-Boxy Chapter Milestones */}
+        <div className="flex items-center justify-between gap-2 pt-1">
           {MASTERS_CHAPTERS.map((ch, idx) => {
             const active = activeChapterIdx === idx;
+            const passed = activeChapterIdx > idx;
             return (
               <button
                 key={ch.id}
                 type="button"
                 onClick={() => scrollToChapter(ch.id)}
-                className={`flex-1 py-1.5 px-2 font-pixel text-xs border-2 border-[#18261C] transition-colors whitespace-nowrap truncate cursor-pointer ${
+                className={`flex-1 inline-flex items-center justify-center gap-1.5 py-1 px-1 font-pixel text-[11px] transition-colors whitespace-nowrap truncate cursor-pointer ${
                   active
-                    ? 'bg-[#E59A00] text-[#18261C] font-bold'
-                    : 'bg-white text-[#4C6050]'
+                    ? 'text-[#18261C] font-bold underline decoration-[#E59A00] decoration-2 underline-offset-4'
+                    : passed
+                      ? 'text-[#2E7D32] font-semibold'
+                      : 'text-[#4C6050] hover:text-[#18261C]'
                 }`}
               >
-                {ch.stepNumber}.{' '}
-                {ch.id === 'biology' ? 'Biology' : ch.id === 'nesting' ? 'Nesting' : 'Foraging'}
+                <span
+                  aria-hidden="true"
+                  className={`w-2 h-2 rounded-full border border-[#18261C] shrink-0 ${
+                    active
+                      ? 'bg-[#E59A00] scale-110'
+                      : passed
+                        ? 'bg-[#2E7D32]'
+                        : 'bg-[#FFFDF7]'
+                  }`}
+                />
+                <span>
+                  {ch.stepNumber}.{' '}
+                  {ch.id === 'biology' ? 'Biology' : ch.id === 'nesting' ? 'Nesting' : 'Foraging'}
+                </span>
               </button>
             );
           })}

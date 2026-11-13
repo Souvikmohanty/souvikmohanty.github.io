@@ -14,7 +14,7 @@ export function HeroSection({ onStartWalk }: HeroSectionProps) {
   return (
     <section
       id="top"
-      className="relative overflow-x-clip bg-transparent border-b-3 border-[#18261C]"
+      className="relative overflow-x-clip bg-transparent"
     >
       {/* Subtle Distant Pixel Hills across lower horizon */}
       <div
@@ -274,28 +274,57 @@ export function HeroSection({ onStartWalk }: HeroSectionProps) {
         </div>
         <div className="h-2.5 bg-[#543B28] border-b-2 border-[#18261C]" aria-hidden="true" />
 
-        {/* Minimalist Chapter Bar */}
-        <div className="bg-[#FFFDF7]">
-          <div className="max-w-[1160px] mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-            {FIELD_MILESTONES.map((stop, idx) => (
-              <button
-                key={stop.id}
-                type="button"
-                onClick={() => onStartWalk(idx)}
-                className="group inline-flex items-center gap-2 text-left cursor-pointer py-1"
-              >
-                <span
-                  className={`font-mono-tabular text-xs font-bold ${
-                    stop.isNowStop ? 'text-[#C67C00]' : 'text-[#2E7D32]'
-                  }`}
+        {/* Open-Air Non-Boxy Field Walk Trail Index */}
+        <div className="bg-[#FFFDF7] border-b-2 border-[#18261C]/15">
+          <div className="max-w-[1160px] mx-auto px-4 sm:px-6 py-4">
+            <div className="flex items-center justify-between gap-2 mb-2.5 lg:hidden">
+              <span className="font-mono-tabular text-[10px] font-bold tracking-wider text-[#2E7D32] uppercase">
+                Field Trail Stops
+              </span>
+              <span className="font-mono-tabular text-[10px] text-[#4C6050]">
+                Tap to jump
+              </span>
+            </div>
+
+            <div className="relative grid grid-cols-2 sm:grid-cols-3 lg:flex lg:items-center lg:justify-between gap-x-4 gap-y-3">
+              {/* Subtle connecting dotted trail line across desktop */}
+              <div
+                aria-hidden="true"
+                className="hidden lg:block absolute left-3 right-3 top-1/2 -translate-y-1/2 border-t-2 border-dotted border-[#18261C]/20 pointer-events-none"
+              />
+
+              {FIELD_MILESTONES.map((stop, idx) => (
+                <motion.button
+                  key={stop.id}
+                  type="button"
+                  onClick={() => onStartWalk(idx)}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.04 * idx }}
+                  whileHover={{ x: 2 }}
+                  className="group relative z-10 flex items-center gap-2 text-left cursor-pointer py-0.5 lg:bg-[#FFFDF7] lg:px-2 min-w-0"
                 >
-                  {stop.stepNumber}
-                </span>
-                <span className="font-pixel text-sm text-[#18261C] group-hover:underline decoration-2 underline-offset-4">
-                  {stop.shortTitle}
-                </span>
-              </button>
-            ))}
+                  <span
+                    aria-hidden="true"
+                    className={`w-2.5 h-2.5 rounded-full shrink-0 transition-transform group-hover:scale-125 ${
+                      stop.isNowStop
+                        ? 'bg-[#E59A00] ring-3 ring-[#FFE066]/70'
+                        : 'bg-[#2E7D32]'
+                    }`}
+                  />
+                  <span
+                    className={`font-mono-tabular text-[11px] font-bold shrink-0 ${
+                      stop.isNowStop ? 'text-[#C67C00]' : 'text-[#2E7D32]'
+                    }`}
+                  >
+                    {stop.stepNumber}
+                  </span>
+                  <span className="font-pixel text-[13px] sm:text-sm text-[#18261C] group-hover:text-[#2E7D32] group-hover:underline decoration-[#E59A00] decoration-2 underline-offset-4 truncate transition-colors">
+                    {stop.shortTitle}
+                  </span>
+                </motion.button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
