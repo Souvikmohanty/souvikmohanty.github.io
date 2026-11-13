@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-pixel: 'Pixelify Sans', monospace;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'Space Mono', ui-monospace, monospace;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    scroll-behavior: smooth;
+    background-color: #92D2F5;
+    color: #18261C;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+.font-pixel {
+  font-family: var(--font-pixel);
+}
+
+.font-mono-tabular {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.pixel-render {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Tactile retro hard-edge shadow */
+.pixel-box {
+  box-shadow: 4px 4px 0px 0px #18261C;
+}
+
+.pixel-box-sm {
+  box-shadow: 3px 3px 0px 0px #18261C;
+}
+
+/* Subtle transparent field-notebook dot-grid overlay */
+.notebook-grid {
+  background-image: radial-gradient(rgba(24, 38, 28, 0.14) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Subtle RPG dialogue frame */
+.rpg-dialog {
+  background-color: #FFFDF7;
+  border: 3px solid #18261C;
+  box-shadow:
+    inset 0 0 0 2px #E6DEC8,
+    5px 5px 0px 0px #18261C;
+}
+
+/* Gentle insect hover wingbeat */
+@keyframes beeHover {
+  0%, 100% {
+    transform: translate(0px, 0px) rotate(-3deg);
+  }
+  25% {
+    transform: translate(4px, -5px) rotate(2deg);
+  }
+  50% {
+    transform: translate(0px, -8px) rotate(4deg);
+  }
+  75% {
+    transform: translate(-4px, -3px) rotate(-1deg);
+  }
+}
+
+.animate-bee-hover {
+  animation: beeHover 2.6s ease-in-out infinite;
+}
+
+@keyframes gentleBob {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-bob {
+  animation: gentleBob 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-bee-hover,
+  .animate-bob {
+    animation: none;
+  }
+}
+
+/* Print stylesheet for CV Modal */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-cv-sheet,
+  #printable-cv-sheet * {
+    visibility: visible;
+  }
+  #printable-cv-sheet {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 24px;
+    background: #ffffff !important;
+    color: #18261C !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
