@@ -27,7 +27,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: run: npm install --legacy-peer-deps
+        run: npm install --legacy-peer-deps
 
       - name: Build static bundle
         run: npm run build
