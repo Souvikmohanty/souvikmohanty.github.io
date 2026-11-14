@@ -3,19 +3,21 @@ import type { SpecimenId } from '../data/portfolioData';
 interface PixelResearcherProps {
   stridePhase: 0 | 1 | 2; // 0 = idle/inspect, 1 = left step, 2 = right step
   isInspecting: boolean;
+  isJumping?: boolean;
   className?: string;
 }
 
 /**
  * 16-bit pixel-art researcher sprite (Souvik) with field sun hat,
- * khaki entomology vest, hand lens, field notebook, and 2-frame walk cycle.
+ * khaki entomology vest, hand lens, field notebook, jump pose, and 2-frame walk cycle.
  */
 export function PixelResearcher({
   stridePhase,
   isInspecting,
+  isJumping = false,
   className = '',
 }: PixelResearcherProps) {
-  const bobOffset = stridePhase === 1 ? -1 : 0;
+  const bobOffset = isJumping ? -2 : stridePhase === 1 ? -1 : 0;
 
   return (
     <svg
@@ -24,8 +26,10 @@ export function PixelResearcher({
       aria-hidden="true"
       shapeRendering="crispEdges"
     >
-      {/* Ground shadow */}
-      <rect x="8" y="39" width="18" height="2" fill="#18261C" fillOpacity="0.28" />
+      {/* Ground shadow (hidden while airborne so ground layer handles shadow) */}
+      {!isJumping && (
+        <rect x="8" y="39" width="18" height="2" fill="#18261C" fillOpacity="0.28" />
+      )}
 
       <g transform={`translate(0, ${bobOffset})`}>
         {/* Wide-brim field sun hat */}
@@ -67,13 +71,19 @@ export function PixelResearcher({
         <rect x="3" y="22" width="4" height="5" fill="#FFFDF7" />
         <rect x="3" y="22" width="4" height="1" fill="#E59A00" />
 
-        {/* Front arm — raised with hand lens when inspecting, swings when walking */}
-        {isInspecting ? (
+        {/* Front arm — raised with hand lens when inspecting, swings when jumping/walking */}
+        {isJumping ? (
+          <>
+            <rect x="25" y="14" width="4" height="5" fill="#3B6D42" />
+            <rect x="28" y="12" width="3" height="3" fill="#C98B5E" />
+          </>
+        ) : isInspecting ? (
           <>
             <rect x="25" y="16" width="4" height="3" fill="#3B6D42" />
             <rect x="28" y="14" width="3" height="3" fill="#C98B5E" />
-            {/* Magnifying hand lens */}
+            {/* Magnifying hand lens + crisp lens gleam */}
             <rect x="30" y="8" width="5" height="5" fill="#9AE0F4" />
+            <rect x="31" y="9" width="2" height="1" fill="#FFFFFF" />
             <rect x="30" y="8" width="5" height="1" fill="#18261C" />
             <rect x="30" y="12" width="5" height="1" fill="#18261C" />
             <rect x="29" y="9" width="1" height="3" fill="#18261C" />
@@ -95,8 +105,16 @@ export function PixelResearcher({
         {/* Field trousers */}
         <rect x="11" y="29" width="12" height="4" fill="#4E3F30" />
 
-        {/* Alternating walking legs */}
-        {stridePhase === 1 ? (
+        {/* Jump pose or alternating walking/idle legs */}
+        {isJumping ? (
+          <>
+            {/* Airborne tucked legs */}
+            <rect x="8" y="31" width="5" height="4" fill="#3D3024" />
+            <rect x="6" y="35" width="6" height="2" fill="#18261C" />
+            <rect x="20" y="30" width="6" height="4" fill="#3D3024" />
+            <rect x="22" y="34" width="6" height="2" fill="#18261C" />
+          </>
+        ) : stridePhase === 1 ? (
           <>
             {/* Left leg forward, right leg back */}
             <rect x="8" y="33" width="5" height="5" fill="#3D3024" />
@@ -122,6 +140,221 @@ export function PixelResearcher({
           </>
         )}
       </g>
+    </svg>
+  );
+}
+
+/**
+ * 16-bit pixel-art field trail hurdles (stones, insects, and natural obstacles)
+ * randomly placed between milestones for Souvik to jump over.
+ */
+export function PixelHurdle({
+  variant,
+  className = '',
+}: {
+  variant: number;
+  className?: string;
+}) {
+  const kind = ((variant % 10) + 10) % 10;
+
+  return (
+    <svg
+      viewBox="0 0 36 24"
+      className={`pixel-render ${className}`}
+      aria-hidden="true"
+      shapeRendering="crispEdges"
+    >
+      {kind === 0 && (
+        /* Mossy field stone */
+        <>
+          <rect x="6" y="11" width="24" height="12" fill="#78909C" />
+          <rect x="9" y="7" width="18" height="5" fill="#90A4AE" />
+          <rect x="12" y="5" width="10" height="3" fill="#4CAF50" />
+          <rect x="9" y="8" width="5" height="3" fill="#2E7D32" />
+          <rect x="6" y="19" width="24" height="4" fill="#546E7A" />
+          <rect x="6" y="23" width="24" height="1" fill="#18261C" />
+        </>
+      )}
+      {kind === 1 && (
+        /* Stacked flat river stones (cobble cairn) */
+        <>
+          <rect x="5" y="17" width="26" height="6" fill="#607D8B" />
+          <rect x="7" y="16" width="22" height="2" fill="#90A4AE" />
+          <rect x="9" y="11" width="18" height="5" fill="#78909C" />
+          <rect x="11" y="10" width="14" height="2" fill="#B0BEC5" />
+          <rect x="13" y="6" width="10" height="4" fill="#8D6E63" />
+          <rect x="15" y="5" width="6" height="2" fill="#BCAAA4" />
+          <rect x="5" y="23" width="26" height="1" fill="#18261C" />
+        </>
+      )}
+      {kind === 2 && (
+        /* Spotted crimson beetle / ladybug */
+        <>
+          <rect x="8" y="10" width="18" height="10" fill="#D32F2F" />
+          <rect x="10" y="7" width="14" height="4" fill="#E53935" />
+          <rect x="6" y="12" width="4" height="7" fill="#18261C" />
+          <rect x="4" y="10" width="2" height="2" fill="#18261C" />
+          <rect x="4" y="15" width="2" height="2" fill="#18261C" />
+          {/* Beetle spots */}
+          <rect x="13" y="9" width="3" height="3" fill="#18261C" />
+          <rect x="19" y="11" width="3" height="3" fill="#18261C" />
+          <rect x="14" y="15" width="3" height="3" fill="#18261C" />
+          {/* Legs */}
+          <rect x="10" y="20" width="2" height="3" fill="#18261C" />
+          <rect x="16" y="20" width="2" height="3" fill="#18261C" />
+          <rect x="22" y="20" width="2" height="3" fill="#18261C" />
+        </>
+      )}
+      {kind === 3 && (
+        /* Emerald field grasshopper */
+        <>
+          <rect x="10" y="12" width="16" height="5" fill="#558B2F" />
+          <rect x="7" y="10" width="5" height="6" fill="#7CB342" />
+          <rect x="8" y="11" width="2" height="2" fill="#18261C" />
+          <rect x="4" y="8" width="3" height="2" fill="#33691E" />
+          {/* Big hind jumping leg */}
+          <rect x="19" y="6" width="3" height="7" fill="#8BC34A" />
+          <rect x="22" y="8" width="3" height="12" fill="#558B2F" />
+          <rect x="25" y="18" width="3" height="2" fill="#33691E" />
+          <rect x="10" y="17" width="2" height="4" fill="#33691E" />
+          <rect x="14" y="17" width="2" height="4" fill="#33691E" />
+        </>
+      )}
+      {kind === 4 && (
+        /* Hovering teal-blue dragonfly */
+        <>
+          {/* Shimmering wings */}
+          <rect x="8" y="3" width="9" height="4" fill="#E0F7FA" />
+          <rect x="19" y="3" width="9" height="4" fill="#E0F7FA" />
+          <rect x="10" y="8" width="7" height="3" fill="#B2EBF2" />
+          <rect x="19" y="8" width="7" height="3" fill="#B2EBF2" />
+          {/* Slender body */}
+          <rect x="16" y="6" width="4" height="5" fill="#00897B" />
+          <rect x="17" y="11" width="2" height="9" fill="#00ACC1" />
+          <rect x="16" y="7" width="1" height="2" fill="#18261C" />
+          <rect x="19" y="7" width="1" height="2" fill="#18261C" />
+          {/* Grass reed beneath */}
+          <rect x="9" y="21" width="18" height="2" fill="#2E7D32" />
+        </>
+      )}
+      {kind === 5 && (
+        /* Fluttering monarch butterfly over flower */
+        <>
+          <rect x="7" y="4" width="8" height="7" fill="#FB8C00" />
+          <rect x="21" y="4" width="8" height="7" fill="#FB8C00" />
+          <rect x="9" y="6" width="4" height="3" fill="#FFE082" />
+          <rect x="23" y="6" width="4" height="3" fill="#FFE082" />
+          <rect x="16" y="5" width="4" height="9" fill="#18261C" />
+          <rect x="14" y="3" width="2" height="2" fill="#18261C" />
+          <rect x="20" y="3" width="2" height="2" fill="#18261C" />
+          {/* Tiny meadow flower below */}
+          <rect x="17" y="16" width="2" height="7" fill="#2E7D32" />
+          <rect x="15" y="15" width="6" height="3" fill="#F4A6BE" />
+        </>
+      )}
+      {kind === 6 && (
+        /* Fallen bamboo culm log */
+        <>
+          <rect x="3" y="11" width="30" height="10" fill="#A17233" />
+          <rect x="3" y="11" width="30" height="3" fill="#D7A449" />
+          <rect x="12" y="10" width="2" height="12" fill="#5D4037" />
+          <rect x="23" y="10" width="2" height="12" fill="#5D4037" />
+          <rect x="16" y="5" width="2" height="6" fill="#2E7D32" />
+          <rect x="18" y="4" width="5" height="3" fill="#4CAF50" />
+          <rect x="3" y="21" width="30" height="2" fill="#18261C" />
+        </>
+      )}
+      {kind === 7 && (
+        /* Blooming mustard bush */
+        <>
+          <rect x="6" y="10" width="24" height="12" fill="#2E7D32" />
+          <rect x="9" y="6" width="18" height="7" fill="#4CAF50" />
+          <rect x="11" y="5" width="3" height="3" fill="#F2B705" />
+          <rect x="18" y="4" width="3" height="3" fill="#FFE066" />
+          <rect x="22" y="8" width="3" height="3" fill="#F2B705" />
+          <rect x="9" y="12" width="3" height="3" fill="#FFE066" />
+          <rect x="6" y="22" width="24" height="2" fill="#18261C" />
+        </>
+      )}
+      {kind === 8 && (
+        /* Stacked earthen honey pots */
+        <>
+          <rect x="6" y="12" width="10" height="10" fill="#B8683C" />
+          <rect x="7" y="10" width="8" height="2" fill="#D78E5D" />
+          <rect x="19" y="12" width="10" height="10" fill="#B8683C" />
+          <rect x="20" y="10" width="8" height="2" fill="#D78E5D" />
+          <rect x="12" y="4" width="11" height="9" fill="#C9794A" />
+          <rect x="13" y="2" width="9" height="2" fill="#F2B705" />
+          <rect x="6" y="22" width="23" height="2" fill="#18261C" />
+        </>
+      )}
+      {kind === 9 && (
+        /* Sandy ant-hill mound with pebbles */
+        <>
+          <rect x="6" y="16" width="24" height="7" fill="#C68B59" />
+          <rect x="10" y="11" width="16" height="5" fill="#D7A472" />
+          <rect x="14" y="8" width="8" height="3" fill="#E6BE94" />
+          <rect x="16" y="8" width="4" height="3" fill="#4E342E" />
+          <rect x="9" y="20" width="3" height="2" fill="#78909C" />
+          <rect x="24" y="19" width="3" height="2" fill="#78909C" />
+          {/* Tiny foraging ants */}
+          <rect x="11" y="14" width="2" height="1" fill="#18261C" />
+          <rect x="22" y="13" width="2" height="1" fill="#18261C" />
+          <rect x="6" y="23" width="24" height="1" fill="#18261C" />
+        </>
+      )}
+    </svg>
+  );
+}
+
+/**
+ * Small ambient insects & stones for living trail ecosystem detail.
+ */
+export function PixelAmbientInsect({
+  kind,
+  className = '',
+}: {
+  kind: 'butterfly' | 'dragonfly' | 'beetle' | 'stone';
+  className?: string;
+}) {
+  return (
+    <svg
+      viewBox="0 0 16 12"
+      className={`pixel-render ${className}`}
+      aria-hidden="true"
+      shapeRendering="crispEdges"
+    >
+      {kind === 'butterfly' && (
+        <>
+          <rect x="2" y="2" width="5" height="4" fill="#F2B705" />
+          <rect x="9" y="2" width="5" height="4" fill="#F2B705" />
+          <rect x="3" y="6" width="4" height="3" fill="#FB8C00" />
+          <rect x="9" y="6" width="4" height="3" fill="#FB8C00" />
+          <rect x="7" y="2" width="2" height="7" fill="#18261C" />
+        </>
+      )}
+      {kind === 'dragonfly' && (
+        <>
+          <rect x="2" y="2" width="5" height="2" fill="#E0F7FA" />
+          <rect x="9" y="2" width="5" height="2" fill="#E0F7FA" />
+          <rect x="7" y="2" width="2" height="8" fill="#00897B" />
+        </>
+      )}
+      {kind === 'beetle' && (
+        <>
+          <rect x="4" y="4" width="8" height="5" fill="#D32F2F" />
+          <rect x="3" y="5" width="2" height="3" fill="#18261C" />
+          <rect x="6" y="5" width="2" height="2" fill="#18261C" />
+          <rect x="9" y="6" width="2" height="2" fill="#18261C" />
+        </>
+      )}
+      {kind === 'stone' && (
+        <>
+          <rect x="2" y="6" width="12" height="5" fill="#78909C" />
+          <rect x="4" y="4" width="8" height="2" fill="#B0BEC5" />
+          <rect x="3" y="10" width="10" height="1" fill="#455A64" />
+        </>
+      )}
     </svg>
   );
 }

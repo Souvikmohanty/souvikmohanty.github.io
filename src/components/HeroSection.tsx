@@ -274,9 +274,9 @@ export function HeroSection({ onStartWalk }: HeroSectionProps) {
         </div>
         <div className="h-2.5 bg-[#543B28] border-b-2 border-[#18261C]" aria-hidden="true" />
 
-        {/* Open-Air Non-Boxy Field Walk Trail Index */}
-        <div className="bg-[#FFFDF7] border-b-2 border-[#18261C]/15">
-          <div className="max-w-[1160px] mx-auto px-4 sm:px-6 py-4">
+        {/* Open-Air Non-Boxy Field Walk Trail Index blending smoothly into sky */}
+        <div className="bg-gradient-to-b from-[#FFFDF7] via-[#FFFDF7]/92 to-[#E3F4FC]/70 pb-3">
+          <div className="max-w-[1160px] mx-auto px-4 sm:px-6 pt-4 pb-3">
             <div className="flex items-center justify-between gap-2 mb-2.5 lg:hidden">
               <span className="font-mono-tabular text-[10px] font-bold tracking-wider text-[#2E7D32] uppercase">
                 Field Trail Stops
@@ -302,7 +302,7 @@ export function HeroSection({ onStartWalk }: HeroSectionProps) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: 0.04 * idx }}
                   whileHover={{ x: 2 }}
-                  className="group relative z-10 flex items-center gap-2 text-left cursor-pointer py-0.5 lg:bg-[#FFFDF7] lg:px-2 min-w-0"
+                  className="group relative z-10 flex items-center gap-2 text-left cursor-pointer py-0.5 lg:bg-[#FFFDF7]/85 lg:px-2 lg:rounded-full min-w-0"
                 >
                   <span
                     aria-hidden="true"

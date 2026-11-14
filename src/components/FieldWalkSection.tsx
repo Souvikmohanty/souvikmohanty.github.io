@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AnimatePresence,
   motion,
@@ -22,7 +22,13 @@ import {
   type SpecimenDetail,
 } from '../data/portfolioData';
 import { soundFx } from '../utils/soundFx';
-import { PixelBeeIcon, PixelResearcher, PixelStopProp } from './PixelSprites';
+import {
+  PixelAmbientInsect,
+  PixelBeeIcon,
+  PixelHurdle,
+  PixelResearcher,
+  PixelStopProp,
+} from './PixelSprites';
 
 interface FieldWalkSectionProps {
   onSelectSpecimen: (specimen: SpecimenDetail, milestoneTitle: string) => void;
@@ -81,6 +87,148 @@ const WALK_MIDGROUND_OUTPUT = [
   '-63%', '-63%',
 ];
 
+const WALK_SEGMENTS: Array<[number, number]> = [
+  [0.03, 0.12],
+  [0.19, 0.28],
+  [0.35, 0.44],
+  [0.51, 0.6],
+  [0.67, 0.76],
+  [0.83, 0.91],
+];
+
+const HURDLE_SLOTS = [
+  { frac: 0.37, posClass: 'left-[55%] sm:left-[62%]' },
+  { frac: 0.46, posClass: 'left-[64%] sm:left-[71%]' },
+  { frac: 0.54, posClass: 'left-[72%] sm:left-[79%]' },
+  { frac: 0.62, posClass: 'left-[80%] sm:left-[87%]' },
+];
+
+const AMBIENT_POS_CLASSES = [
+  'left-[14%]',
+  'left-[26%]',
+  'left-[46%]',
+  'left-[58%]',
+  'left-[74%]',
+  'left-[89%]',
+];
+
+const AMBIENT_KINDS: Array<'butterfly' | 'dragonfly' | 'beetle' | 'stone'> = [
+  'stone',
+  'beetle',
+  'butterfly',
+  'dragonfly',
+];
+
+function MidgroundLandmark({ kind }: { kind: number }) {
+  switch (kind % 8) {
+    case 0:
+      /* Traditional Apiary Bee-Box Stand */
+      return (
+        <div className="flex items-end gap-2">
+          <svg viewBox="0 0 36 28" className="w-16 h-12 pixel-render" shapeRendering="crispEdges">
+            <rect x="4" y="16" width="28" height="3" fill="#5D4037" />
+            <rect x="6" y="19" width="3" height="9" fill="#4E342E" />
+            <rect x="27" y="19" width="3" height="9" fill="#4E342E" />
+            <rect x="7" y="9" width="10" height="7" fill="#D7A449" />
+            <rect x="6" y="7" width="12" height="2" fill="#2E7D32" />
+            <rect x="19" y="10" width="10" height="6" fill="#E6BE73" />
+            <rect x="18" y="8" width="12" height="2" fill="#E59A00" />
+            <rect x="11" y="13" width="2" height="2" fill="#18261C" />
+            <rect x="23" y="13" width="2" height="2" fill="#18261C" />
+          </svg>
+        </div>
+      );
+    case 1:
+      /* Lush Banyan Tree with Aerial Roots */
+      return (
+        <svg viewBox="0 0 44 36" className="w-20 h-16 pixel-render" shapeRendering="crispEdges">
+          <rect x="18" y="16" width="8" height="20" fill="#6D4C41" />
+          <rect x="11" y="18" width="2" height="18" fill="#5D4037" />
+          <rect x="31" y="18" width="2" height="18" fill="#5D4037" />
+          <rect x="6" y="8" width="32" height="10" fill="#2E7D32" />
+          <rect x="10" y="3" width="24" height="7" fill="#4CAF50" />
+          <rect x="16" y="10" width="10" height="4" fill="#66BB6A" />
+        </svg>
+      );
+    case 2:
+      /* Field Irrigation Pond & Reeds */
+      return (
+        <svg viewBox="0 0 48 24" className="w-20 h-10 pixel-render" shapeRendering="crispEdges">
+          <rect x="4" y="18" width="40" height="5" fill="#4FC3F7" />
+          <rect x="8" y="16" width="32" height="3" fill="#81D4FA" />
+          <rect x="10" y="7" width="2" height="13" fill="#2E7D32" />
+          <rect x="14" y="10" width="2" height="10" fill="#388E3C" />
+          <rect x="9" y="5" width="4" height="3" fill="#6D4C41" />
+          <rect x="34" y="11" width="2" height="9" fill="#2E7D32" />
+          <rect x="20" y="17" width="6" height="2" fill="#4CAF50" />
+          <rect x="22" y="15" width="3" height="2" fill="#F4A6BE" />
+        </svg>
+      );
+    case 3:
+      /* Countryside Farm Windmill */
+      return (
+        <svg viewBox="0 0 32 40" className="w-14 h-18 pixel-render" shapeRendering="crispEdges">
+          <rect x="13" y="12" width="6" height="28" fill="#8D6E63" />
+          <rect x="11" y="28" width="10" height="12" fill="#6D4C41" />
+          <rect x="14" y="9" width="4" height="4" fill="#E59A00" />
+          <rect x="6" y="9" width="8" height="2" fill="#FFFDF7" />
+          <rect x="18" y="9" width="8" height="2" fill="#FFFDF7" />
+          <rect x="15" y="2" width="2" height="8" fill="#FFFDF7" />
+          <rect x="15" y="12" width="2" height="8" fill="#FFFDF7" />
+        </svg>
+      );
+    case 4:
+      /* Blooming Manipur Siroi Lily & Wildflower Clump */
+      return (
+        <svg viewBox="0 0 36 24" className="w-16 h-10 pixel-render" shapeRendering="crispEdges">
+          <rect x="8" y="12" width="2" height="12" fill="#2E7D32" />
+          <rect x="6" y="8" width="6" height="4" fill="#F4A6BE" />
+          <rect x="18" y="10" width="2" height="14" fill="#388E3C" />
+          <rect x="15" y="6" width="8" height="4" fill="#FAD4E0" />
+          <rect x="18" y="7" width="2" height="2" fill="#E59A00" />
+          <rect x="28" y="13" width="2" height="11" fill="#2E7D32" />
+          <rect x="26" y="10" width="6" height="3" fill="#FFFDF7" />
+        </svg>
+      );
+    case 5:
+      /* Golden Mustard / Rapeseed Crop Rows */
+      return (
+        <svg viewBox="0 0 44 24" className="w-20 h-11 pixel-render" shapeRendering="crispEdges">
+          <rect x="4" y="13" width="2" height="11" fill="#2E7D32" />
+          <rect x="3" y="9" width="4" height="4" fill="#F2B705" />
+          <rect x="12" y="11" width="2" height="13" fill="#388E3C" />
+          <rect x="10" y="7" width="6" height="4" fill="#FFE066" />
+          <rect x="22" y="12" width="2" height="12" fill="#2E7D32" />
+          <rect x="20" y="8" width="6" height="4" fill="#F2B705" />
+          <rect x="32" y="10" width="2" height="14" fill="#388E3C" />
+          <rect x="30" y="6" width="6" height="4" fill="#FFE066" />
+        </svg>
+      );
+    case 6:
+      /* Tall Staggered Bamboo Grove */
+      return (
+        <div className="flex items-end gap-1.5">
+          <div className="w-2.5 h-14 bg-[#458B4B] border-b border-[#18261C]/30" />
+          <div className="w-2.5 h-20 bg-[#2E7D32]" />
+          <div className="w-2 h-12 bg-[#66BB6A]" />
+          <div className="w-2.5 h-16 bg-[#388E3C]" />
+        </div>
+      );
+    default:
+      /* Glass Research Greenhouse & Bamboo Fence */
+      return (
+        <svg viewBox="0 0 44 28" className="w-20 h-12 pixel-render" shapeRendering="crispEdges">
+          <rect x="6" y="12" width="32" height="16" fill="#E0F7FA" />
+          <rect x="10" y="6" width="24" height="6" fill="#B2EBF2" />
+          <rect x="6" y="12" width="32" height="2" fill="#2E7D32" />
+          <rect x="14" y="14" width="2" height="14" fill="#5D4037" />
+          <rect x="28" y="14" width="2" height="14" fill="#5D4037" />
+          <rect x="19" y="19" width="6" height="9" fill="#81C784" />
+        </svg>
+      );
+  }
+}
+
 export const STOP_DWELL_RANGES: Array<{ start: number; end: number; center: number }> = [
   { start: 0.116, end: 0.194, center: 0.155 }, // Stop 01
   { start: 0.276, end: 0.354, center: 0.315 }, // Stop 02
@@ -96,13 +244,93 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
   const [arrivedStop, setArrivedStop] = useState<number | null>(null);
   const [hudStop, setHudStop] = useState<number>(-1); // -1 = Trailhead
   const [isWalking, setIsWalking] = useState(false);
+  const [isJumping, setIsJumping] = useState(false);
   const [strideTick, setStrideTick] = useState(false);
+  const [idleBeat, setIdleBeat] = useState(0);
+  const [showHello, setShowHello] = useState(true);
   const [distanceMeters, setDistanceMeters] = useState(0);
-  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
 
   const walkTimeoutRef = useRef<number | null>(null);
+  const helloTimeoutRef = useRef<number | null>(null);
   const lastArrivedRef = useRef<number | null>(null);
+  const lastJumpedHurdleRef = useRef<number | null>(null);
   const lastStepSoundRef = useRef(0);
+
+  // Randomize hurdle types (stones, insects, logs, pots), horizontal placements, and jump heights
+  const randomizedHurdles = useMemo(() => {
+    // Shuffle a curated pool of stones (0,1), insects (2,3,4,5), and field hurdles (6,7,8,9)
+    const stoneAndInsectPool = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
+    const extraPool = [6, 7, 8, 9].sort(() => Math.random() - 0.5);
+    const pickedVariants = [
+      stoneAndInsectPool[0],
+      stoneAndInsectPool[1],
+      extraPool[0],
+      stoneAndInsectPool[2],
+      stoneAndInsectPool[3],
+      extraPool[1],
+    ];
+    const peakHeights = [-66, -74, -80];
+
+    return WALK_SEGMENTS.map(([segStart, segEnd], idx) => {
+      const slot = HURDLE_SLOTS[Math.floor(Math.random() * HURDLE_SLOTS.length)];
+      const midpoint = segStart + slot.frac * (segEnd - segStart);
+      const peakY = peakHeights[Math.floor(Math.random() * peakHeights.length)];
+      const variant = pickedVariants[idx];
+      const isInsect = variant >= 2 && variant <= 5;
+      return {
+        id: `hurdle-${idx}`,
+        panelIndex: idx,
+        variant,
+        isInsect,
+        posClass: slot.posClass,
+        midpoint,
+        peakY,
+      };
+    });
+  }, []);
+
+  // Scatter random decorative stones & ambient insects along every panel
+  const ambientCritters = useMemo(() => {
+    return Array.from({ length: TOTAL_PANELS }).map((_, panelIdx) => {
+      const count = 2 + (panelIdx % 2);
+      return Array.from({ length: count }).map((__, itemIdx) => {
+        const kind =
+          AMBIENT_KINDS[Math.floor(Math.random() * AMBIENT_KINDS.length)];
+        const posClass =
+          AMBIENT_POS_CLASSES[(panelIdx * 2 + itemIdx * 3) % AMBIENT_POS_CLASSES.length];
+        return {
+          key: `critter-${panelIdx}-${itemIdx}`,
+          kind,
+          posClass,
+          isAerial: kind === 'butterfly' || kind === 'dragonfly',
+        };
+      });
+    });
+  }, []);
+
+  const jumpCurve = useMemo(() => {
+    const inputs: number[] = [0];
+    const ys: number[] = [0];
+    const rotates: number[] = [0];
+    const shadows: number[] = [1];
+
+    for (const hurdle of randomizedHurdles) {
+      const m = hurdle.midpoint;
+      const midY = Math.round(hurdle.peakY * 0.66);
+      inputs.push(m - 0.024, m - 0.012, m, m + 0.012, m + 0.024);
+      ys.push(0, midY, hurdle.peakY, midY, 0);
+      rotates.push(0, -7, 0, 5, 0);
+      shadows.push(1, 0.62, 0.44, 0.62, 1);
+    }
+
+    inputs.push(1);
+    ys.push(0);
+    rotates.push(0);
+    shadows.push(1);
+
+    return { inputs, ys, rotates, shadows };
+  }, [randomizedHurdles]);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -113,10 +341,40 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
   const cloudsX = useTransform(scrollYProgress, WALK_KEYFRAMES_INPUT, WALK_CLOUDS_OUTPUT);
   const hillsX = useTransform(scrollYProgress, WALK_KEYFRAMES_INPUT, WALK_HILLS_OUTPUT);
   const midgroundX = useTransform(scrollYProgress, WALK_KEYFRAMES_INPUT, WALK_MIDGROUND_OUTPUT);
+  const jumpY = useTransform(scrollYProgress, jumpCurve.inputs, jumpCurve.ys);
+  const jumpRotate = useTransform(scrollYProgress, jumpCurve.inputs, jumpCurve.rotates);
+  const jumpShadowScale = useTransform(scrollYProgress, jumpCurve.inputs, jumpCurve.shadows);
 
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
     const clamped = Math.min(1, Math.max(0, latest));
     setDistanceMeters(Math.round(clamped * 600));
+
+    // Hide Hello chat bubble as soon as the visitor scrolls into the trail
+    if (clamped > 0.015) {
+      setShowHello(false);
+      if (helloTimeoutRef.current !== null) {
+        window.clearTimeout(helloTimeoutRef.current);
+        helloTimeoutRef.current = null;
+      }
+    }
+
+    // Check randomized hurdle jump windows
+    let jumpingHurdle: number | null = null;
+    for (let h = 0; h < randomizedHurdles.length; h++) {
+      if (Math.abs(clamped - randomizedHurdles[h].midpoint) < 0.022) {
+        jumpingHurdle = h;
+        break;
+      }
+    }
+    setIsJumping(jumpingHurdle !== null);
+    if (jumpingHurdle !== null) {
+      if (lastJumpedHurdleRef.current !== jumpingHurdle) {
+        lastJumpedHurdleRef.current = jumpingHurdle;
+        soundFx.playJump();
+      }
+    } else {
+      lastJumpedHurdleRef.current = null;
+    }
 
     let matchedStop: number | null = null;
     let closestHudStop = -1;
@@ -146,7 +404,7 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
     if (matchedStop === null && clamped > 0.025) {
       setIsWalking(true);
       const now = Date.now();
-      if (now - lastStepSoundRef.current > 210) {
+      if (jumpingHurdle === null && now - lastStepSoundRef.current > 210) {
         lastStepSoundRef.current = now;
         soundFx.playStep();
       }
@@ -158,6 +416,9 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
       }, 150);
     } else {
       setIsWalking(false);
+      if (clamped <= 0.015) {
+        setShowHello(true);
+      }
       if (walkTimeoutRef.current !== null) {
         window.clearTimeout(walkTimeoutRef.current);
         walkTimeoutRef.current = null;
@@ -177,10 +438,24 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
     return () => window.clearInterval(timer);
   }, [isWalking]);
 
+  // Playful idle animation: opens magnifying glass & gently shifts legs when stationary
   useEffect(() => {
+    if (isWalking || isJumping) return;
+    const timer = window.setInterval(() => {
+      setIdleBeat((prev) => (prev + 1) % 4);
+    }, 520);
+    return () => window.clearInterval(timer);
+  }, [isWalking, isJumping]);
+
+  useEffect(() => {
+    const unsubscribe = soundFx.subscribe(setSoundEnabled);
     return () => {
+      unsubscribe();
       if (walkTimeoutRef.current !== null) {
         window.clearTimeout(walkTimeoutRef.current);
+      }
+      if (helloTimeoutRef.current !== null) {
+        window.clearTimeout(helloTimeoutRef.current);
       }
     };
   }, []);
@@ -189,6 +464,20 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
     const next = !soundEnabled;
     setSoundEnabled(next);
     soundFx.setEnabled(next);
+  };
+
+  const handleCharacterPoke = () => {
+    soundFx.playToggleOn();
+    setIdleBeat((prev) => (prev + 1) % 4);
+    setShowHello(true);
+    if (helloTimeoutRef.current !== null) {
+      window.clearTimeout(helloTimeoutRef.current);
+    }
+    if (hudStop >= 0) {
+      helloTimeoutRef.current = window.setTimeout(() => {
+        setShowHello(false);
+      }, 2000);
+    }
   };
 
   // stopIndex: -1 = Trailhead, 0..5 = Milestones 01..06
@@ -213,7 +502,9 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
   };
 
   const activeMilestone = hudStop >= 0 ? FIELD_MILESTONES[hudStop] : null;
-  const stridePhase: 0 | 1 | 2 = !isWalking ? 0 : strideTick ? 1 : 2;
+  const idleStridePhase: 0 | 1 | 2 = idleBeat === 1 ? 1 : idleBeat === 3 ? 2 : 0;
+  const stridePhase: 0 | 1 | 2 = isJumping ? 1 : isWalking ? (strideTick ? 1 : 2) : idleStridePhase;
+  const isIdleInspecting = !isWalking && !isJumping && idleBeat !== 0;
 
   return (
     <section
@@ -343,70 +634,97 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
         {/* ================= PARALLAX PIXEL WORLD CANVAS ================= */}
         <div className="relative flex-1 w-full overflow-hidden">
 
-          {/* Parallax Layer 1: Pixel Clouds */}
+          {/* Parallax Layer 1: Varied Pixel Clouds, Birds & Aerial Butterflies */}
           <motion.div
             style={{ x: cloudsX }}
             aria-hidden="true"
-            className="absolute top-5 left-0 w-[190%] flex justify-around pointer-events-none"
+            className="absolute top-3 left-0 w-[195%] flex items-start justify-around pointer-events-none"
           >
-            {[0, 1, 2, 3, 4, 5, 6, 7].map((n) => (
-              <svg
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+              <div
                 key={n}
-                viewBox="0 0 64 24"
-                className="w-24 sm:w-32 h-10 pixel-render opacity-90"
-                shapeRendering="crispEdges"
+                className={`flex items-center gap-3 ${
+                  n % 3 === 1 ? 'mt-5' : n % 3 === 2 ? 'mt-2' : 'mt-0'
+                }`}
               >
-                <rect x="14" y="6" width="28" height="12" fill="#FFFFFF" />
-                <rect x="8" y="10" width="44" height="8" fill="#FFFFFF" />
-                <rect x="20" y="2" width="16" height="6" fill="#FFFFFF" />
-                <rect x="8" y="16" width="44" height="2" fill="#D5EEF8" />
-              </svg>
+                {n % 3 === 0 ? (
+                  <svg viewBox="0 0 64 24" className="w-24 sm:w-32 h-10 pixel-render opacity-90" shapeRendering="crispEdges">
+                    <rect x="14" y="6" width="28" height="12" fill="#FFFFFF" />
+                    <rect x="8" y="10" width="44" height="8" fill="#FFFFFF" />
+                    <rect x="20" y="2" width="16" height="6" fill="#FFFFFF" />
+                    <rect x="8" y="16" width="44" height="2" fill="#D5EEF8" />
+                  </svg>
+                ) : n % 3 === 1 ? (
+                  <svg viewBox="0 0 56 20" className="w-20 sm:w-28 h-8 pixel-render opacity-85" shapeRendering="crispEdges">
+                    <rect x="6" y="10" width="44" height="6" fill="#FFFFFF" />
+                    <rect x="14" y="5" width="22" height="6" fill="#FFFDF7" />
+                    <rect x="6" y="15" width="44" height="2" fill="#CDEAF8" />
+                  </svg>
+                ) : (
+                  <div className="flex items-center gap-4">
+                    <svg viewBox="0 0 28 14" className="w-10 h-5 pixel-render opacity-75" shapeRendering="crispEdges">
+                      <rect x="2" y="4" width="3" height="2" fill="#3B5B4A" />
+                      <rect x="5" y="6" width="2" height="2" fill="#3B5B4A" />
+                      <rect x="7" y="4" width="3" height="2" fill="#3B5B4A" />
+                      <rect x="16" y="2" width="3" height="2" fill="#3B5B4A" />
+                      <rect x="19" y="4" width="2" height="2" fill="#3B5B4A" />
+                      <rect x="21" y="2" width="3" height="2" fill="#3B5B4A" />
+                    </svg>
+                    <svg viewBox="0 0 48 20" className="w-16 sm:w-24 h-8 pixel-render opacity-85" shapeRendering="crispEdges">
+                      <rect x="10" y="6" width="26" height="10" fill="#FFFFFF" />
+                      <rect x="4" y="10" width="38" height="6" fill="#FFFDF7" />
+                      <rect x="4" y="15" width="38" height="2" fill="#D5EEF8" />
+                    </svg>
+                  </div>
+                )}
+              </div>
             ))}
           </motion.div>
 
-          {/* Parallax Layer 2: Distant Hills */}
+          {/* Parallax Layer 2: Multi-Region Panorama (Campus -> Manipur Hills -> Loktak -> Greenhouses) */}
           <motion.div
             style={{ x: hillsX }}
             aria-hidden="true"
-            className="absolute bottom-[68px] left-0 w-[230%] h-36 sm:h-48 pointer-events-none"
+            className="absolute bottom-[68px] left-0 w-[235%] h-40 sm:h-52 pointer-events-none"
           >
             <svg
-              viewBox="0 0 1600 160"
+              viewBox="0 0 2400 170"
               preserveAspectRatio="none"
               className="w-full h-full"
             >
+              {/* Far misty sky peaks */}
               <polygon
-                points="0,160 0,130 140,122 280,128 420,96 580,58 720,98 880,42 1040,86 1200,32 1360,78 1500,48 1600,80 1600,160"
-                fill="#9BC9A4"
+                points="0,170 0,136 160,126 320,134 500,104 680,68 860,108 1040,48 1220,96 1420,38 1620,84 1820,54 2020,92 2220,46 2400,82 2400,170"
+                fill="#A5D2AE"
               />
+              {/* Distant LPU Campus Silhouettes & Ag Silo (Left) */}
+              <rect x="180" y="96" width="18" height="44" fill="#89B994" />
+              <rect x="184" y="84" width="10" height="12" fill="#77A883" />
+              <rect x="206" y="110" width="44" height="30" fill="#89B994" />
+              <rect x="330" y="104" width="20" height="36" fill="#7FB08A" />
+              {/* Distant Loktak Floating Phumdi Hills & Boat Silhouette (Middle) */}
+              <rect x="920" y="128" width="210" height="18" fill="#79B4BE" opacity="0.65" />
+              <polygon points="985,128 1005,128 1000,133 990,133" fill="#4E6E58" />
+              {/* Distant CAU Imphal Research Conservatory Silhouette (Right) */}
+              <polygon points="1870,118 1900,102 1930,118" fill="#7DB18A" />
+              <rect x="1874" y="118" width="52" height="24" fill="#89B994" />
+              {/* Near emerald valley foothills */}
               <polygon
-                points="0,160 0,142 180,134 340,140 500,112 640,88 790,118 960,76 1120,108 1280,68 1440,104 1600,82 1600,160"
+                points="0,170 0,148 190,138 380,146 570,118 760,94 950,124 1140,86 1340,118 1540,74 1740,110 1940,80 2140,114 2400,88 2400,170"
                 fill="#6BA877"
               />
             </svg>
           </motion.div>
 
-          {/* Parallax Layer 3: Midground Bamboo Groves & Wooden Fences */}
+          {/* Parallax Layer 3: Varied Countryside Biome Landmarks */}
           <motion.div
             style={{ x: midgroundX }}
             aria-hidden="true"
-            className="absolute bottom-[68px] left-0 w-[320%] h-20 flex items-end justify-around pointer-events-none"
+            className="absolute bottom-[68px] left-0 w-[330%] h-24 flex items-end justify-around pointer-events-none opacity-90"
           >
-            {Array.from({ length: 28 }).map((_, i) => (
-              <div key={i} className="flex items-end gap-4 opacity-80">
-                {i % 2 === 0 ? (
-                  <div className="flex items-end gap-1.5">
-                    <div className="w-2.5 h-14 bg-[#458B4B]" />
-                    <div className="w-2.5 h-20 bg-[#2E7D32]" />
-                    <div className="w-2 h-11 bg-[#56A05C]" />
-                  </div>
-                ) : (
-                  <div className="flex items-end gap-5">
-                    <div className="w-2.5 h-8 bg-[#7B593B] border border-[#18261C]" />
-                    <div className="w-12 h-2 bg-[#9B724E] border border-[#18261C] mb-4 -mx-6" />
-                    <div className="w-2.5 h-8 bg-[#7B593B] border border-[#18261C]" />
-                  </div>
-                )}
+            {[0, 1, 2, 3, 4, 5, 6, 7, 1, 5, 0, 2, 4, 6, 3, 7, 5, 1].map((landmarkKind, i) => (
+              <div key={i} className="shrink-0">
+                <MidgroundLandmark kind={landmarkKind} />
               </div>
             ))}
           </motion.div>
@@ -443,6 +761,36 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
                   <rect x="20" y="4" width="4" height="3" fill="#FFFDF7" />
                 </svg>
               </div>
+
+              {/* Ambient scattered stones & field insects in Trailhead panel */}
+              {ambientCritters[0]?.map((critter) => (
+                <div
+                  key={critter.key}
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute ${
+                    critter.isAerial
+                      ? 'bottom-[138px] sm:bottom-[155px] animate-bee-hover'
+                      : 'bottom-[65px]'
+                  } ${critter.posClass}`}
+                >
+                  <PixelAmbientInsect kind={critter.kind} className="w-5 h-4 sm:w-6 sm:h-5" />
+                </div>
+              ))}
+
+              {/* Randomized Hurdle 0 between Trailhead & Milestone 01 */}
+              {randomizedHurdles[0] && (
+                <div
+                  aria-hidden="true"
+                  className={`absolute bottom-[65px] ${randomizedHurdles[0].posClass} -translate-x-1/2 pointer-events-none flex flex-col items-center ${
+                    randomizedHurdles[0].isInsect ? 'animate-bee-hover' : ''
+                  }`}
+                >
+                  <PixelHurdle
+                    variant={randomizedHurdles[0].variant}
+                    className="w-12 h-8 sm:w-14 sm:h-9"
+                  />
+                </div>
+              )}
             </div>
 
             {/* Panels 1..6: Milestone Stops */}
@@ -597,33 +945,133 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
                       </svg>
                     </div>
                   </div>
+
+                  {/* Ambient scattered stones & random insects in Panel idx+1 */}
+                  {ambientCritters[idx + 1]?.map((critter) => (
+                    <div
+                      key={critter.key}
+                      aria-hidden="true"
+                      className={`pointer-events-none absolute ${
+                        critter.isAerial
+                          ? 'bottom-[138px] sm:bottom-[158px] animate-bee-hover'
+                          : 'bottom-[65px]'
+                      } ${critter.posClass}`}
+                    >
+                      <PixelAmbientInsect kind={critter.kind} className="w-5 h-4 sm:w-6 sm:h-5" />
+                    </div>
+                  ))}
+
+                  {/* Randomized hurdle between Milestone idx and idx+1 */}
+                  {idx < FIELD_MILESTONES.length - 1 && randomizedHurdles[idx + 1] && (
+                    <div
+                      aria-hidden="true"
+                      className={`absolute bottom-[65px] ${randomizedHurdles[idx + 1].posClass} -translate-x-1/2 pointer-events-none flex flex-col items-center ${
+                        randomizedHurdles[idx + 1].isInsect ? 'animate-bee-hover' : ''
+                      }`}
+                    >
+                      <PixelHurdle
+                        variant={randomizedHurdles[idx + 1].variant}
+                        className="w-12 h-8 sm:w-14 sm:h-9"
+                      />
+                    </div>
+                  )}
                 </div>
               );
             })}
           </motion.div>
 
-          {/* Clean Fixed-in-frame Walking Pixel Researcher Sprite positioned right beside the left-[33%] prop */}
-          <div className="pointer-events-none absolute bottom-[65px] left-[8%] sm:left-[22%] z-20">
-            <div className="w-20 h-24 sm:w-24 sm:h-28">
-              <PixelResearcher
-                stridePhase={stridePhase}
-                isInspecting={!isWalking && arrivedStop !== null}
-                className="w-full h-full"
-              />
-            </div>
+          {/* Interactive Fixed-in-frame Pixel Researcher with Hello Bubble & Hurdle Jump Physics */}
+          <div className="absolute bottom-[65px] left-[8%] sm:left-[22%] z-20 flex flex-col items-center">
+            {/* Dynamic ground shadow that shrinks cleanly while Souvik jumps */}
+            <motion.div
+              aria-hidden="true"
+              style={{ scaleX: jumpShadowScale }}
+              className="pointer-events-none absolute -bottom-0.5 w-12 sm:w-14 h-2 rounded-full bg-[#18261C]/30"
+            />
+
+            <motion.div
+              style={{ y: jumpY, rotate: jumpRotate }}
+              className="relative flex flex-col items-center"
+            >
+              {/* Small "Hello!" chat bubble above head — disappears on scroll */}
+              <AnimatePresence>
+                {showHello && !isWalking && (
+                  <motion.div
+                    key="souvik-hello-bubble"
+                    initial={{ opacity: 0, y: 6, scale: 0.85 }}
+                    animate={{ opacity: 1, y: [0, -3, 0], scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.8 }}
+                    transition={{
+                      opacity: { duration: 0.2 },
+                      scale: { duration: 0.2 },
+                      y: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },
+                    }}
+                    className="pointer-events-none absolute -top-11 sm:-top-12 left-1/2 -translate-x-1/2 z-30"
+                  >
+                    <div className="relative px-2.5 py-1 bg-[#FFFDF7] border-2 border-[#18261C] shadow-[3px_3px_0_#18261C] whitespace-nowrap flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-[#2E7D32]" aria-hidden="true" />
+                      <span className="font-pixel text-xs sm:text-sm font-bold text-[#18261C]">
+                        Hello!
+                      </span>
+                      <svg
+                        viewBox="0 0 12 8"
+                        aria-hidden="true"
+                        className="absolute -bottom-[8px] left-1/2 -translate-x-1/2 w-3 h-2"
+                      >
+                        <polygon points="0,0 12,0 6,8" fill="#18261C" />
+                        <polygon points="2,0 10,0 6,6" fill="#FFFDF7" />
+                      </svg>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <button
+                type="button"
+                onClick={handleCharacterPoke}
+                aria-label="Say hello to Souvik and toggle magnifying glass"
+                className="w-20 h-24 sm:w-24 sm:h-28 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#18261C] bg-transparent border-0 p-0"
+              >
+                <PixelResearcher
+                  stridePhase={stridePhase}
+                  isInspecting={isIdleInspecting}
+                  isJumping={isJumping}
+                  className="w-full h-full"
+                />
+              </button>
+            </motion.div>
           </div>
 
-          {/* Foreground Turf & Soil Horizon */}
+          {/* Foreground Turf & Varied Subsoil Horizon */}
           <div
             aria-hidden="true"
             className="absolute inset-x-0 bottom-0 h-[68px] z-10 pointer-events-none"
           >
-            <div className="h-4 bg-[#4CAF50] border-t-3 border-[#18261C]" />
-            <div className="h-2.5 bg-[#2E7D32]" />
-            <div className="h-[42px] bg-[#543B28] flex items-center justify-around">
-              {Array.from({ length: 14 }).map((_, i) => (
-                <div key={i} className="w-5 h-2 bg-[#362417]" />
+            <div className="h-4 bg-[#4CAF50] border-t-3 border-[#18261C] flex items-end justify-around px-4">
+              {Array.from({ length: 18 }).map((_, i) => (
+                <div
+                  key={i}
+                  className={
+                    i % 4 === 0
+                      ? 'w-2 h-1.5 bg-[#F2B705]'
+                      : i % 4 === 2
+                        ? 'w-2.5 h-1 bg-[#F4A6BE]'
+                        : 'w-2 h-1.5 bg-[#2E7D32]'
+                  }
+                />
               ))}
+            </div>
+            <div className="h-2.5 bg-[#2E7D32]" />
+            <div className="h-[42px] bg-[#543B28] flex items-center justify-around px-3">
+              {Array.from({ length: 16 }).map((_, i) =>
+                i % 3 === 0 ? (
+                  <div key={i} className="w-4 h-2.5 rounded-sm bg-[#78909C]/75 border border-[#18261C]/30" />
+                ) : i % 3 === 1 ? (
+                  <div key={i} className="w-7 h-1.5 bg-[#362417]" />
+                ) : (
+                  <div key={i} className="w-2.5 h-2.5 bg-[#8D6E63]/65" />
+                ),
+              )}
             </div>
           </div>
         </div>

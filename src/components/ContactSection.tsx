@@ -15,7 +15,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { RESEARCHER_PROFILE } from '../data/portfolioData';
-import { PixelBeeIcon, PixelSouvikPortrait } from './PixelSprites';
+import { PixelBeeIcon } from './PixelSprites';
 
 interface ContactSectionProps {
   onOpenCv: () => void;
@@ -150,7 +150,7 @@ export function ContactSection({ onOpenCv }: ContactSectionProps) {
   const postcardRotate = useTransform(sectionEnter, [0, 1], [-4, -1]);
   const postcardY = useTransform(sectionEnter, [0, 1], [44, 0]);
   const stageOpacity = useTransform(sectionEnter, [0, 0.45, 1], [0.3, 0.9, 1]);
-  const beeFlyX = useTransform(sectionEnter, [0, 1], [-45, 35]);
+  const beeFlyX = useTransform(sectionEnter, [0, 1], [-18, 4]);
   const stemScaleY = useTransform(sectionEnter, [0.1, 0.9], [0.1, 1]);
 
   const handleSelectTopic = (topic: InquiryTopic) => {
@@ -253,13 +253,17 @@ export function ContactSection({ onOpenCv }: ContactSectionProps) {
                   transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
                   className="absolute -inset-2.5 rounded-full border-2 border-dashed border-[#FFE066]/70 pointer-events-none"
                 />
-                <div className="relative w-24 h-24 rounded-full border-3 border-[#18261C] shadow-[4px_5px_0_#E59A00] overflow-hidden bg-[#D5EEF9]">
-                  <PixelSouvikPortrait className="w-full h-full" />
+                <div className="relative w-24 h-24 rounded-full border-3 border-[#18261C] shadow-[4px_5px_0_#E59A00] overflow-hidden bg-[#18261C]">
+                  <img
+                    src="./assets/souvik-profile-bw.jpg"
+                    alt="Souvik Mohanty portrait"
+                    className="w-full h-full object-cover object-center grayscale contrast-110"
+                  />
                 </div>
-                {/* Buzzing bee companion */}
+                {/* Buzzing bee companion hovering right above head */}
                 <motion.div
                   style={{ x: beeFlyX }}
-                  className="absolute -top-2 -right-3 animate-bee-hover pointer-events-none"
+                  className="absolute -top-5 left-1/2 -translate-x-1/2 animate-bee-hover pointer-events-none z-10"
                 >
                   <PixelBeeIcon className="w-7 h-7" />
                 </motion.div>

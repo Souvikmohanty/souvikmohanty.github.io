@@ -6,7 +6,7 @@ import {
   useScroll,
   useTransform,
 } from 'motion/react';
-import { ArrowDown, Layers, Microscope, Sun } from 'lucide-react';
+import { ArrowDown, Layers, Microscope, Sun, Volume2, VolumeX } from 'lucide-react';
 import {
   DEVELOPMENT_BARS,
   FORAGING_SLOTS,
@@ -17,6 +17,7 @@ import {
   type MastersChapter,
 } from '../data/mastersResearchData';
 import { PixelBeeIcon, PixelResearcher } from './PixelSprites';
+import { soundFx } from '../utils/soundFx';
 
 /* ============================================================================
    3D SCROLL-ANIMATED THESIS VISUALIZERS (No nested square boxes!)
@@ -100,8 +101,15 @@ function Biology3DPodiums() {
               <span className="font-pixel text-xs text-[#18261C] mt-1">{bar.stage}</span>
             </motion.div>
 
-            {/* 3D Isometric Extruded Block */}
-            <div className="relative w-full max-w-[110px]" style={{ perspective: '600px' }}>
+            {/* 3D Isometric Extruded Block (tap for lab chime) */}
+            <motion.button
+              type="button"
+              whileTap={{ scale: 0.96 }}
+              onClick={() => soundFx.playSpecimenTap(idx)}
+              className="relative w-full max-w-[110px] cursor-pointer text-left bg-transparent border-0 p-0 focus-visible:outline-2 focus-visible:outline-[#18261C]"
+              style={{ perspective: '600px' }}
+              aria-label={`${bar.stage} stage: ${bar.days} days (${bar.pct}% of cycle)`}
+            >
               {/* Top 3D bevel face */}
               <div
                 style={{ backgroundColor: topColors[idx] }}
@@ -130,7 +138,7 @@ function Biology3DPodiums() {
                   {bar.pct}% cycle
                 </span>
               </motion.div>
-            </div>
+            </motion.button>
             <p className="font-mono-tabular text-[11px] font-semibold text-[#2D3E31] mt-3 text-center">
               {bar.note}
             </p>
@@ -198,8 +206,11 @@ function Nesting3DBambooCutaway() {
 
           <div className="flex items-stretch gap-1 h-20 sm:h-24 rounded-xl overflow-hidden border-2 border-[#18261C] bg-[#2D1F18] p-1">
             {NEST_ZONES.map((z, idx) => (
-              <motion.div
+              <motion.button
                 key={z.zone}
+                type="button"
+                onClick={() => soundFx.playSpecimenTap(idx)}
+                whileTap={{ scale: 0.97 }}
                 initial={{ scaleX: 0, opacity: 0 }}
                 whileInView={{ scaleX: 1, opacity: 1 }}
                 viewport={{ once: true, amount: 0.35 }}
@@ -210,9 +221,10 @@ function Nesting3DBambooCutaway() {
                   originX: 0,
                   boxShadow: 'inset 0 -6px 0 rgba(24,38,28,0.22)',
                 }}
-                className={`rounded-lg border border-[#18261C] flex flex-col items-center justify-center px-1 text-center ${
+                className={`rounded-lg border border-[#18261C] flex flex-col items-center justify-center px-1 text-center cursor-pointer hover:brightness-105 transition-[filter] ${
                   z.textLight ? 'text-white' : 'text-[#18261C]'
                 }`}
+                aria-label={`${z.zone} zone: ${z.lengthCm} cm`}
               >
                 <span className="font-pixel text-[10px] sm:text-xs leading-tight font-bold">
                   {z.zone}
@@ -220,7 +232,7 @@ function Nesting3DBambooCutaway() {
                 <span className="font-mono-tabular text-[10px] sm:text-[11px] font-bold mt-0.5">
                   {z.lengthCm} cm
                 </span>
-              </motion.div>
+              </motion.button>
             ))}
           </div>
         </div>
@@ -284,7 +296,13 @@ function Foraging3DRapeseedStage() {
                 </div>
               )}
 
-              <div className="w-full max-w-[130px]">
+              <motion.button
+                type="button"
+                whileTap={{ scale: 0.96 }}
+                onClick={() => soundFx.playSpecimenTap(idx)}
+                className="w-full max-w-[130px] cursor-pointer text-left bg-transparent border-0 p-0 focus-visible:outline-2 focus-visible:outline-[#18261C]"
+                aria-label={`${slot.slot}: ${slot.outgoing} out, ${slot.rate} flowers per minute`}
+              >
                 {/* Isometric top cap */}
                 <div
                   className={`h-2.5 mx-1 border-2 border-b-0 border-[#18261C] transform -skew-x-12 origin-bottom ${
@@ -315,7 +333,7 @@ function Foraging3DRapeseedStage() {
                     {slot.speed} s/fl
                   </span>
                 </motion.div>
-              </div>
+              </motion.button>
               <p className="font-mono-tabular text-[11px] font-bold text-[#18261C] mt-3 text-center">
                 {slot.slot}
               </p>
@@ -537,8 +555,12 @@ export function MastersResearchSection() {
   const [activeChapterIdx, setActiveChapterIdx] = useState(0);
   const [isClimbing, setIsClimbing] = useState(false);
   const [strideTick, setStrideTick] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(() => soundFx.isEnabled());
 
   const climbTimeoutRef = useRef<number | null>(null);
+  const lastClimbSoundRef = useRef(0);
+  const lastStationRef = useRef(0);
+  const burrowChimePlayedRef = useRef(false);
 
   // Scroll-linked descent through the subterranean burrow diorama
   const { scrollYProgress: dropProgress } = useScroll({
@@ -559,8 +581,16 @@ export function MastersResearchSection() {
   const mobileWalkerX = useTransform(expeditionProgress, [0, 1], ['2%', '81%']);
   const mobileWalkerY = useTransform(expeditionProgress, [0, 1], [0, 8]);
 
-  const triggerClimb = () => {
+  const triggerClimb = (latest?: number) => {
     setIsClimbing(true);
+    const now = Date.now();
+    if (
+      (latest === undefined || (latest > 0.02 && latest < 0.98)) &&
+      now - lastClimbSoundRef.current > 220
+    ) {
+      lastClimbSoundRef.current = now;
+      soundFx.playClimbStep();
+    }
     if (climbTimeoutRef.current !== null) {
       window.clearTimeout(climbTimeoutRef.current);
     }
@@ -569,8 +599,20 @@ export function MastersResearchSection() {
     }, 150);
   };
 
-  useMotionValueEvent(dropProgress, 'change', triggerClimb);
-  useMotionValueEvent(expeditionProgress, 'change', triggerClimb);
+  useMotionValueEvent(dropProgress, 'change', (latest) => {
+    triggerClimb(latest);
+    if (latest > 0.14 && latest < 0.85) {
+      if (!burrowChimePlayedRef.current) {
+        burrowChimePlayedRef.current = true;
+        soundFx.playBurrowEnter();
+      }
+    } else if (latest <= 0.05 || latest >= 0.96) {
+      burrowChimePlayedRef.current = false;
+    }
+  });
+  useMotionValueEvent(expeditionProgress, 'change', (latest) => {
+    triggerClimb(latest);
+  });
 
   useEffect(() => {
     if (!isClimbing) {
@@ -584,17 +626,38 @@ export function MastersResearchSection() {
   }, [isClimbing]);
 
   useEffect(() => {
+    const unsubscribe = soundFx.subscribe(setSoundEnabled);
     return () => {
+      unsubscribe();
       if (climbTimeoutRef.current !== null) {
         window.clearTimeout(climbTimeoutRef.current);
       }
     };
   }, []);
 
-  const scrollToChapter = (chapterId: MastersChapter['id']) => {
+  const handleStationBecomeActive = (idx: number) => {
+    setActiveChapterIdx(idx);
+    if (lastStationRef.current !== idx) {
+      lastStationRef.current = idx;
+      soundFx.playStationFocus(idx);
+    }
+  };
+
+  const scrollToChapter = (chapterId: MastersChapter['id'], idx?: number) => {
+    const targetIdx = idx ?? MASTERS_CHAPTERS.findIndex((c) => c.id === chapterId);
+    if (targetIdx >= 0) {
+      soundFx.playStationFocus(targetIdx);
+      lastStationRef.current = targetIdx;
+    }
     const el = document.getElementById(`thesis-${chapterId}`);
     if (!el) return;
     el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handleToggleSound = () => {
+    const next = !soundEnabled;
+    setSoundEnabled(next);
+    soundFx.setEnabled(next);
   };
 
   const stridePhase: 0 | 1 | 2 = !isClimbing ? 0 : strideTick ? 1 : 2;
@@ -763,6 +826,24 @@ export function MastersResearchSection() {
             <span className="font-pixel text-xs px-2.5 py-0.5 bg-[#E59A00] text-[#18261C] border-2 border-[#18261C]">
               REG: {THESIS_METADATA.registrationNo}
             </span>
+            <button
+              type="button"
+              onClick={handleToggleSound}
+              aria-pressed={soundEnabled}
+              aria-label={soundEnabled ? 'Mute expedition sound effects' : 'Enable expedition sound effects'}
+              className={`md:hidden ml-auto inline-flex items-center gap-1 px-2.5 py-0.5 text-[11px] font-bold border-2 border-[#18261C] rounded-md transition-colors cursor-pointer ${
+                soundEnabled
+                  ? 'bg-[#2E7D32] text-white'
+                  : 'bg-[#FFFDF7] text-[#18261C]'
+              }`}
+            >
+              {soundEnabled ? (
+                <Volume2 className="w-3 h-3 shrink-0" aria-hidden="true" />
+              ) : (
+                <VolumeX className="w-3 h-3 shrink-0" aria-hidden="true" />
+              )}
+              <span>{soundEnabled ? 'SFX On' : 'SFX Off'}</span>
+            </button>
           </div>
 
           <h2
@@ -968,13 +1049,33 @@ export function MastersResearchSection() {
               </div>
             </div>
 
-            <div className="mt-4 pl-16">
-              <p className="font-mono-tabular text-[10px] font-bold text-[#4C6050] uppercase">
-                Exploring Station {activeChapter.stepNumber} / 03
-              </p>
-              <p className="font-pixel text-sm font-bold text-[#18261C] truncate">
-                {activeChapter.title}
-              </p>
+            <div className="mt-4 pl-16 space-y-3">
+              <div>
+                <p className="font-mono-tabular text-[10px] font-bold text-[#4C6050] uppercase">
+                  Exploring Station {activeChapter.stepNumber} / 03
+                </p>
+                <p className="font-pixel text-sm font-bold text-[#18261C] truncate">
+                  {activeChapter.title}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleToggleSound}
+                aria-pressed={soundEnabled}
+                aria-label={soundEnabled ? 'Mute expedition sound effects' : 'Enable expedition sound effects'}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold border-2 border-[#18261C] rounded-lg transition-colors cursor-pointer ${
+                  soundEnabled
+                    ? 'bg-[#2E7D32] text-white shadow-[2px_2px_0_#18261C]'
+                    : 'bg-[#FFFDF7] text-[#18261C] hover:bg-[#EFECE2]'
+                }`}
+              >
+                {soundEnabled ? (
+                  <Volume2 className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                ) : (
+                  <VolumeX className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                )}
+                <span>{soundEnabled ? 'SFX On' : 'SFX Off'}</span>
+              </button>
             </div>
           </aside>
 
@@ -986,7 +1087,7 @@ export function MastersResearchSection() {
                 chapter={chapter}
                 index={idx}
                 isActive={activeChapterIdx === idx}
-                onBecomeActive={setActiveChapterIdx}
+                onBecomeActive={handleStationBecomeActive}
               />
             ))}
           </div>

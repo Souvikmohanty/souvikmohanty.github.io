@@ -1,16 +1,52 @@
-// Web Audio API 8-bit chiptune synthesizer for optional field-walk feedback.
-// Muted by default; only produces sound when explicitly enabled by the user.
+// Web Audio API 8-bit chiptune synthesizer for field-walk feedback.
+// Enabled by default; users can mute/unmute anytime from the Field Walk HUD.
 
 class PixelSoundEngine {
   private ctx: AudioContext | null = null;
-  private enabled = false;
+  private enabled = true;
+  private unlockBound = false;
+  private listeners = new Set<(enabled: boolean) => void>();
+
+  constructor() {
+    this.bindGestureUnlock();
+  }
+
+  private bindGestureUnlock(): void {
+    if (typeof window === 'undefined' || this.unlockBound) return;
+    this.unlockBound = true;
+
+    const unlock = () => {
+      if (!this.enabled) return;
+      const ctx = this.ensureContext();
+      if (ctx && ctx.state === 'suspended') {
+        void ctx.resume().catch(() => {});
+      }
+      if (ctx && ctx.state === 'running') {
+        window.removeEventListener('pointerdown', unlock);
+        window.removeEventListener('touchstart', unlock);
+        window.removeEventListener('keydown', unlock);
+      }
+    };
+
+    window.addEventListener('pointerdown', unlock, { passive: true });
+    window.addEventListener('touchstart', unlock, { passive: true });
+    window.addEventListener('keydown', unlock, { passive: true });
+  }
 
   public isEnabled(): boolean {
     return this.enabled;
   }
 
+  public subscribe(listener: (enabled: boolean) => void): () => void {
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
+
   public setEnabled(next: boolean): void {
     this.enabled = next;
+    this.listeners.forEach((fn) => fn(next));
     if (next) {
       this.ensureContext();
       this.playToggleOn();
@@ -28,7 +64,7 @@ class PixelSoundEngine {
       }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
-      void this.ctx.resume();
+      void this.ctx.resume().catch(() => {});
     }
     return this.ctx;
   }
@@ -42,7 +78,7 @@ class PixelSoundEngine {
   ): void {
     if (!this.enabled) return;
     const ctx = this.ensureContext();
-    if (!ctx) return;
+    if (!ctx || ctx.state !== 'running') return;
 
     const now = ctx.currentTime + delaySec;
     const osc = ctx.createOscillator();
@@ -69,6 +105,37 @@ class PixelSoundEngine {
 
   public playStep(): void {
     this.playTone(180, 0.035, 'triangle', 0.025, 0);
+  }
+
+  public playClimbStep(): void {
+    // Gentle wooden/bamboo rung knock while descending or climbing
+    this.playTone(215, 0.032, 'triangle', 0.024, 0);
+    this.playTone(155, 0.03, 'triangle', 0.018, 0.025);
+  }
+
+  public playBurrowEnter(): void {
+    // Descending subterranean shaft chime
+    this.playTone(440, 0.06, 'triangle', 0.03, 0);
+    this.playTone(349.23, 0.06, 'triangle', 0.03, 0.06);
+    this.playTone(261.63, 0.1, 'triangle', 0.032, 0.12);
+  }
+
+  public playStationFocus(stationIndex: number): void {
+    const baseFreqs = [440, 493.88, 587.33];
+    const base = baseFreqs[stationIndex % baseFreqs.length] ?? 440;
+    this.playTone(base, 0.06, 'triangle', 0.028, 0);
+    this.playTone(base * 1.25, 0.09, 'triangle', 0.028, 0.055);
+  }
+
+  public playSpecimenTap(pitchIndex = 0): void {
+    const notes = [523.25, 587.33, 659.25, 783.99, 880];
+    const freq = notes[pitchIndex % notes.length] ?? 523.25;
+    this.playTone(freq, 0.07, 'sine', 0.035, 0);
+  }
+
+  public playJump(): void {
+    this.playTone(329.63, 0.05, 'square', 0.032, 0);
+    this.playTone(523.25, 0.08, 'square', 0.032, 0.04);
   }
 
   public playMilestoneArrive(isFinal = false): void {
