@@ -235,288 +235,247 @@ export function PhotoBookSection() {
           )}
         </AnimatePresence>
 
-        {/* ================= DESKTOP 3D HINGED HARDCOVER BOOK (lg+) ================= */}
+        {/* ================= DESKTOP HINGED HARDCOVER BOOK (lg+) ================= */}
         <motion.div
-          style={{ y: bookStageY, opacity: bookStageOpacity, perspective: '2200px' }}
-          className="hidden lg:block max-w-[780px] mx-auto"
+          style={{ y: bookStageY, opacity: bookStageOpacity, perspective: '1800px' }}
+          className="hidden lg:block max-w-[820px] mx-auto"
         >
-          {/* Shift entire book left -25% when closed so the right-side hinged cover sits dead center! */}
-          <motion.div
-            animate={{ x: isOpen ? '0%' : '-25%' }}
-            transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
-            className="relative"
-            style={{ transformStyle: 'preserve-3d' }}
-          >
-            {/* OUTER OPEN BACKPLATE FRAME (visible around both pages as cover swings open) */}
-            <motion.div
-              animate={{
-                opacity: isOpen ? 1 : 0,
-                boxShadow: isOpen
-                  ? '10px 12px 0 #18261C'
-                  : '0px 0px 0 rgba(24,38,28,0)',
-              }}
-              transition={{ duration: 0.5, delay: isOpen ? 0.2 : 0 }}
-              className="rounded-2xl bg-[#23452A] border-3 border-[#18261C] p-3"
-            >
-              {/* TWIN CREAM ALBUM PAGES */}
-              <div className="relative bg-[#FAF6EA] border-2 border-[#18261C] rounded-xl overflow-visible min-h-[430px] grid grid-cols-2">
-                {/* Center Spine Gutter Shadow */}
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-8 bg-gradient-to-r from-transparent via-[#18261C]/16 to-transparent pointer-events-none z-10"
-                />
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-y-3 left-1/2 -translate-x-1/2 w-[1px] bg-[#18261C]/28 pointer-events-none z-10"
-                />
+          <AnimatePresence mode="wait" initial={false}>
+            {!isOpen ? (
+              <motion.div
+                key="desktop-closed"
+                initial={{ opacity: 0, rotateY: -35 }}
+                animate={{ opacity: 1, rotateY: 0 }}
+                exit={{ opacity: 0, rotateY: -85 }}
+                transition={{ duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+                style={{ transformOrigin: 'left center' }}
+                className="flex justify-center"
+              >
+                <div className="relative w-[390px] min-h-[450px]">
+                  {/* Layered Cream Page Edges visible on right & bottom when closed */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute top-3 -right-3 bottom-3 w-3.5 bg-[#FAF4E4] border-2 border-l-0 border-[#18261C] rounded-r-md"
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="absolute left-3 -bottom-2.5 right-1 h-3 bg-[#EFE6CF] border-2 border-t-0 border-[#18261C] rounded-b-md"
+                  />
 
-                {/* LEFT PAGE CONTENT (Revealed smoothly as the front cover opens past 90deg!) */}
-                <motion.div
-                  animate={{ opacity: isOpen ? 1 : 0 }}
-                  transition={{ duration: 0.28, delay: isOpen ? 0.38 : 0 }}
-                  className={`p-5 pr-7 flex flex-col ${
-                    isOpen ? 'pointer-events-auto' : 'pointer-events-none'
-                  }`}
-                >
-                  <div className="flex items-baseline justify-between gap-2 mb-4 border-b border-[#18261C]/15 pb-1.5">
-                    <div>
-                      <h3 className="font-pixel text-base font-bold text-[#18261C]">
-                        {currentSpread.leftTitle}
-                      </h3>
-                      <p className="font-mono-tabular text-[10px] text-[#4C6050]">
-                        {currentSpread.leftNote}
-                      </p>
-                    </div>
-                    <span className="font-mono-tabular text-[11px] font-bold text-[#B86800]">
-                      p.{spreadIndex * 2 + 1}
-                    </span>
-                  </div>
-
-                  <motion.div
-                    key={`left-${currentSpread.id}`}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3, delay: 0.15 }}
-                    className="grid grid-cols-2 gap-4 items-start flex-1 content-start"
+                  <button
+                    type="button"
+                    onClick={handleOpenBook}
+                    className="group relative w-full h-full min-h-[450px] flex rounded-r-2xl rounded-l-md bg-[#23452A] border-3 border-[#18261C] shadow-[10px_12px_0_#18261C] overflow-hidden cursor-pointer text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2E7D32]"
+                    aria-label="Tap to open Souvik's Photo Book"
                   >
-                    {currentSpread.leftPhotos.map((photo) => (
-                      <StuckPhotoPrint
-                        key={photo.id}
-                        photo={photo}
-                        onInspect={setActiveLightboxPhoto}
-                      />
-                    ))}
-                  </motion.div>
-                </motion.div>
+                    {/* Stitched Leather Spine */}
+                    <div
+                      aria-hidden="true"
+                      className="w-8 bg-[#17301C] border-r-3 border-[#18261C] flex flex-col justify-between py-6 items-center shrink-0"
+                    >
+                      <div className="w-3.5 h-1 bg-[#E59A00]" />
+                      <div className="w-0.5 flex-1 my-4 border-l-2 border-dashed border-[#E59A00]/65" />
+                      <div className="w-3.5 h-1 bg-[#E59A00]" />
+                    </div>
 
-                {/* RIGHT PAGE CONTENT (Sits directly underneath the hinged cover!) */}
-                <div
-                  className={`p-5 pl-7 flex flex-col justify-between ${
-                    isOpen ? 'pointer-events-auto' : 'pointer-events-none'
-                  }`}
-                >
-                  <div>
+                    {/* Cover Front Details */}
+                    <div className="flex-1 p-5 flex flex-col items-center justify-center text-center relative">
+                      <span
+                        aria-hidden="true"
+                        className="absolute top-2.5 right-2.5 w-4 h-4 border-t-3 border-r-3 border-[#E59A00]"
+                      />
+                      <span
+                        aria-hidden="true"
+                        className="absolute bottom-2.5 right-2.5 w-4 h-4 border-b-3 border-r-3 border-[#E59A00]"
+                      />
+
+                      <div className="bg-[#FFFDF7] border-2 border-[#18261C] shadow-[3px_3px_0_#E59A00] px-4 py-1.5 mb-4">
+                        <p className="font-pixel text-[10px] text-[#2E7D32] tracking-wider">
+                          ARCHIVE · 2024–2026
+                        </p>
+                        <h3 className="font-pixel text-xl font-bold text-[#18261C] leading-tight">
+                          PHOTO ALBUM
+                        </h3>
+                      </div>
+
+                      {/* Cleanly Framed Cover Polaroid Snapshot */}
+                      <div className="relative bg-white p-2 pb-3 border-2 border-[#18261C] shadow-[4px_4px_0_#18261C] -rotate-2 group-hover:rotate-0 transition-transform duration-300 w-48 mb-4">
+                        <span
+                          aria-hidden="true"
+                          className="absolute -top-2 left-1/2 -translate-x-1/2 w-12 h-3 bg-[#F2B705]/75 border border-[#18261C]/40"
+                        />
+                        <div className="aspect-[4/3] overflow-hidden border border-[#18261C]/35 bg-[#EBF3E8] mb-1.5">
+                          <img
+                            src={COVER_PREVIEW_PHOTO.src}
+                            alt={COVER_PREVIEW_PHOTO.alt}
+                            referrerPolicy="no-referrer"
+                            loading="lazy"
+                            decoding="async"
+                            className={`w-full h-full object-cover ${COVER_PREVIEW_PHOTO.objectPosition}`}
+                          />
+                        </div>
+                        <p className="font-mono-tabular text-[10px] text-[#2D3E31]">
+                          15 field &amp; campus prints inside
+                        </p>
+                      </div>
+
+                      <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#E59A00] group-hover:bg-[#FFE066] text-[#18261C] border-2 border-[#18261C] shadow-[3px_3px_0_#18261C] font-pixel text-xs font-bold transition-colors">
+                        <BookOpen className="w-3.5 h-3.5" aria-hidden="true" />
+                        <span>TAP TO OPEN ALBUM</span>
+                      </div>
+                    </div>
+
+                    {/* Brass Fore-edge Clasp */}
+                    <div aria-hidden="true" className="flex items-center">
+                      <div className="w-3.5 h-12 bg-[#E59A00] border-2 border-r-0 border-[#18261C] rounded-l-md shadow-[-2px_2px_0_#18261C]" />
+                    </div>
+                  </button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="desktop-open"
+                initial={{ opacity: 0, scale: 0.96, rotateX: 6 }}
+                animate={{ opacity: 1, scale: 1, rotateX: 0 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="rounded-2xl bg-[#23452A] border-3 border-[#18261C] p-3 shadow-[10px_12px_0_#18261C]"
+              >
+                {/* TWIN CREAM ALBUM PAGES */}
+                <div className="relative bg-[#FAF6EA] border-2 border-[#18261C] rounded-xl overflow-visible min-h-[450px] grid grid-cols-2">
+                  {/* Center Spine Gutter Shadow & Bookmark Ribbon */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-8 bg-gradient-to-r from-transparent via-[#18261C]/16 to-transparent pointer-events-none z-10"
+                  />
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-y-3 left-1/2 -translate-x-1/2 w-[1px] bg-[#18261C]/30 pointer-events-none z-10"
+                  />
+
+                  {/* LEFT PAGE CONTENT */}
+                  <div className="p-5 pr-7 flex flex-col">
                     <div className="flex items-baseline justify-between gap-2 mb-4 border-b border-[#18261C]/15 pb-1.5">
                       <div>
                         <h3 className="font-pixel text-base font-bold text-[#18261C]">
-                          {currentSpread.rightTitle}
+                          {currentSpread.leftTitle}
                         </h3>
                         <p className="font-mono-tabular text-[10px] text-[#4C6050]">
-                          {currentSpread.rightNote}
+                          {currentSpread.leftNote}
                         </p>
                       </div>
-                      <span className="font-mono-tabular text-[11px] font-bold text-[#2E7D32]">
-                        p.{spreadIndex * 2 + 2}
+                      <span className="font-mono-tabular text-[11px] font-bold text-[#B86800]">
+                        p.{spreadIndex * 2 + 1}
                       </span>
                     </div>
 
                     <motion.div
-                      key={`right-${currentSpread.id}`}
+                      key={`left-${currentSpread.id}`}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3, delay: 0.15 }}
-                      className={
-                        currentSpread.rightPhotos.length === 1
-                          ? 'flex flex-col items-center gap-4'
-                          : 'grid grid-cols-2 gap-4 items-start'
-                      }
+                      transition={{ duration: 0.25 }}
+                      className="grid grid-cols-2 gap-4 items-start flex-1 content-start"
                     >
-                      {currentSpread.rightPhotos.map((photo) => (
+                      {currentSpread.leftPhotos.map((photo) => (
                         <StuckPhotoPrint
                           key={photo.id}
                           photo={photo}
                           onInspect={setActiveLightboxPhoto}
-                          featured={currentSpread.rightPhotos.length === 1}
                         />
                       ))}
+                    </motion.div>
+                  </div>
 
-                      {currentSpread.rightPhotos.length === 1 && (
-                        <div className="text-center max-w-xs pt-1">
-                          <p className="font-pixel text-sm font-bold text-[#2E7D32]">
-                            More field rolls coming soon...
-                          </p>
-                          <p className="font-mono-tabular text-xs text-[#4C6050] mt-1">
-                            Now continuing into my Ph.D. chapter at CAU Imphal.
+                  {/* RIGHT PAGE CONTENT */}
+                  <div className="p-5 pl-7 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-baseline justify-between gap-2 mb-4 border-b border-[#18261C]/15 pb-1.5">
+                        <div>
+                          <h3 className="font-pixel text-base font-bold text-[#18261C]">
+                            {currentSpread.rightTitle}
+                          </h3>
+                          <p className="font-mono-tabular text-[10px] text-[#4C6050]">
+                            {currentSpread.rightNote}
                           </p>
                         </div>
-                      )}
-                    </motion.div>
-                  </div>
-                </div>
-
-                {/* VISIBLE 3D PAGE-FLIP LEAF WHEN SWITCHING SPREADS */}
-                <AnimatePresence>
-                  {isOpen && flipNonce > 0 && (
-                    <motion.div
-                      key={`turning-leaf-${flipNonce}`}
-                      aria-hidden="true"
-                      initial={{
-                        rotateY: turnDirection > 0 ? 0 : -180,
-                        opacity: 0.96,
-                      }}
-                      animate={{
-                        rotateY: turnDirection > 0 ? -180 : 0,
-                        opacity: [0.96, 1, 0.96, 0],
-                      }}
-                      transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
-                      style={{
-                        transformOrigin: 'left center',
-                        transformStyle: 'preserve-3d',
-                      }}
-                      className="absolute top-0 bottom-0 left-1/2 w-1/2 z-30 pointer-events-none"
-                    >
-                      {/* Turning Sheet Front */}
-                      <div
-                        style={{ backfaceVisibility: 'hidden' }}
-                        className="absolute inset-0 bg-gradient-to-l from-[#EFE6CF] via-[#FAF6EA] to-[#E6DCC0] border-l-2 border-[#18261C]/40 rounded-r-xl shadow-2xl"
-                      />
-                      {/* Turning Sheet Back */}
-                      <div
-                        style={{
-                          backfaceVisibility: 'hidden',
-                          transform: 'rotateY(180deg)',
-                        }}
-                        className="absolute inset-0 bg-gradient-to-r from-[#EFE6CF] via-[#FAF6EA] to-[#E6DCC0] border-r-2 border-[#18261C]/40 rounded-l-xl shadow-2xl"
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </motion.div>
-
-            {/* HINGED 3D FRONT HARDCOVER (Anchors at spine left: 50%, swings 0deg -> -180deg!) */}
-            <motion.div
-              initial={false}
-              animate={{ rotateY: isOpen ? -180 : 0 }}
-              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              style={{
-                transformOrigin: 'left center',
-                transformStyle: 'preserve-3d',
-              }}
-              className={`absolute top-0 bottom-0 left-1/2 w-1/2 z-40 ${
-                isOpen ? 'pointer-events-none' : 'pointer-events-auto'
-              }`}
-            >
-              {/* FRONT FACE: Stitched Forest-Green Leather Hardcover */}
-              <div
-                style={{ backfaceVisibility: 'hidden' }}
-                className="absolute inset-0"
-              >
-                {/* Layered Paper Edges visible on right & bottom when closed */}
-                <div
-                  aria-hidden="true"
-                  className="absolute top-3 -right-3 bottom-3 w-3.5 bg-[#FAF4E4] border-2 border-l-0 border-[#18261C] rounded-r-md"
-                />
-                <div
-                  aria-hidden="true"
-                  className="absolute left-3 -bottom-2.5 right-1 h-3 bg-[#EFE6CF] border-2 border-t-0 border-[#18261C] rounded-b-md"
-                />
-
-                <button
-                  type="button"
-                  onClick={handleOpenBook}
-                  className="group relative w-full h-full flex rounded-r-2xl rounded-l-md bg-[#23452A] border-3 border-[#18261C] shadow-[10px_12px_0_#18261C] overflow-hidden cursor-pointer text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2E7D32]"
-                  aria-label="Tap to open Souvik's Photo Book"
-                >
-                  {/* Stitched Leather Spine */}
-                  <div
-                    aria-hidden="true"
-                    className="w-8 bg-[#17301C] border-r-3 border-[#18261C] flex flex-col justify-between py-6 items-center shrink-0"
-                  >
-                    <div className="w-3.5 h-1 bg-[#E59A00]" />
-                    <div className="w-0.5 flex-1 my-4 border-l-2 border-dashed border-[#E59A00]/65" />
-                    <div className="w-3.5 h-1 bg-[#E59A00]" />
-                  </div>
-
-                  {/* Cover Front Details */}
-                  <div className="flex-1 p-5 flex flex-col items-center justify-center text-center relative">
-                    <span
-                      aria-hidden="true"
-                      className="absolute top-2.5 right-2.5 w-4 h-4 border-t-3 border-r-3 border-[#E59A00]"
-                    />
-                    <span
-                      aria-hidden="true"
-                      className="absolute bottom-2.5 right-2.5 w-4 h-4 border-b-3 border-r-3 border-[#E59A00]"
-                    />
-
-                    <div className="bg-[#FFFDF7] border-2 border-[#18261C] shadow-[3px_3px_0_#E59A00] px-4 py-1.5 mb-4">
-                      <p className="font-pixel text-[10px] text-[#2E7D32] tracking-wider">
-                        ARCHIVE · 2024–2026
-                      </p>
-                      <h3 className="font-pixel text-xl font-bold text-[#18261C] leading-tight">
-                        PHOTO ALBUM
-                      </h3>
-                    </div>
-
-                    {/* Cleanly Framed Cover Polaroid Snapshot */}
-                    <div className="relative bg-white p-2 pb-3 border-2 border-[#18261C] shadow-[4px_4px_0_#18261C] -rotate-2 group-hover:rotate-0 transition-transform duration-300 w-48 mb-4">
-                      <span
-                        aria-hidden="true"
-                        className="absolute -top-2 left-1/2 -translate-x-1/2 w-12 h-3 bg-[#F2B705]/75 border border-[#18261C]/40"
-                      />
-                      <div className="aspect-[4/3] overflow-hidden border border-[#18261C]/35 bg-[#EBF3E8] mb-1.5">
-                        <img
-                          src={COVER_PREVIEW_PHOTO.src}
-                          alt={COVER_PREVIEW_PHOTO.alt}
-                          referrerPolicy="no-referrer"
-                          loading="lazy"
-                          decoding="async"
-                          className={`w-full h-full object-cover ${COVER_PREVIEW_PHOTO.objectPosition}`}
-                        />
+                        <span className="font-mono-tabular text-[11px] font-bold text-[#2E7D32]">
+                          p.{spreadIndex * 2 + 2}
+                        </span>
                       </div>
-                      <p className="font-mono-tabular text-[10px] text-[#2D3E31]">
-                        15 field &amp; campus prints inside
-                      </p>
-                    </div>
 
-                    <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#E59A00] group-hover:bg-[#FFE066] text-[#18261C] border-2 border-[#18261C] shadow-[3px_3px_0_#18261C] font-pixel text-xs font-bold transition-colors">
-                      <BookOpen className="w-3.5 h-3.5" aria-hidden="true" />
-                      <span>TAP TO OPEN ALBUM</span>
+                      <motion.div
+                        key={`right-${currentSpread.id}`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.25 }}
+                        className={
+                          currentSpread.rightPhotos.length === 1
+                            ? 'flex flex-col items-center gap-4'
+                            : 'grid grid-cols-2 gap-4 items-start'
+                        }
+                      >
+                        {currentSpread.rightPhotos.map((photo) => (
+                          <StuckPhotoPrint
+                            key={photo.id}
+                            photo={photo}
+                            onInspect={setActiveLightboxPhoto}
+                            featured={currentSpread.rightPhotos.length === 1}
+                          />
+                        ))}
+
+                        {currentSpread.rightPhotos.length === 1 && (
+                          <div className="text-center max-w-xs pt-1">
+                            <p className="font-pixel text-sm font-bold text-[#2E7D32]">
+                              More field rolls coming soon...
+                            </p>
+                            <p className="font-mono-tabular text-xs text-[#4C6050] mt-1">
+                              Now continuing into my Ph.D. chapter at CAU Imphal.
+                            </p>
+                          </div>
+                        )}
+                      </motion.div>
                     </div>
                   </div>
 
-                  {/* Brass Fore-edge Clasp */}
-                  <div aria-hidden="true" className="flex items-center">
-                    <div className="w-3.5 h-12 bg-[#E59A00] border-2 border-r-0 border-[#18261C] rounded-l-md shadow-[-2px_2px_0_#18261C]" />
-                  </div>
-                </button>
-              </div>
-
-              {/* BACK FACE OF COVER: Warm Cream Endpaper (seen briefly as cover swings past 90deg!) */}
-              <div
-                style={{
-                  backfaceVisibility: 'hidden',
-                  transform: 'rotateY(180deg)',
-                }}
-                className="absolute inset-0 bg-[#FAF6EA] border-3 border-[#18261C] rounded-l-2xl p-6 shadow-inner flex flex-col justify-between pointer-events-none"
-              >
-                <div className="border-b border-[#18261C]/15 pb-2">
-                  <p className="font-pixel text-sm text-[#2E7D32]">INSIDE COVER</p>
+                  {/* VISIBLE 3D PAGE-FLIP LEAF WHEN SWITCHING SPREADS */}
+                  <AnimatePresence>
+                    {flipNonce > 0 && (
+                      <motion.div
+                        key={`turning-leaf-${flipNonce}`}
+                        aria-hidden="true"
+                        initial={{
+                          rotateY: turnDirection > 0 ? 0 : -180,
+                          opacity: 0.94,
+                        }}
+                        animate={{
+                          rotateY: turnDirection > 0 ? -180 : 0,
+                          opacity: [0.94, 1, 0.92, 0],
+                        }}
+                        transition={{ duration: 0.56, ease: [0.22, 1, 0.36, 1] }}
+                        style={{
+                          transformOrigin: 'left center',
+                          transformStyle: 'preserve-3d',
+                        }}
+                        className="absolute top-0 bottom-0 left-1/2 w-1/2 z-30 pointer-events-none"
+                      >
+                        <div
+                          style={{ backfaceVisibility: 'hidden' }}
+                          className="absolute inset-0 bg-gradient-to-l from-[#EFE6CF] via-[#FAF6EA] to-[#E6DCC0] border-l-2 border-[#18261C]/35 rounded-r-xl shadow-xl"
+                        />
+                        <div
+                          style={{
+                            backfaceVisibility: 'hidden',
+                            transform: 'rotateY(180deg)',
+                          }}
+                          className="absolute inset-0 bg-gradient-to-r from-[#EFE6CF] via-[#FAF6EA] to-[#E6DCC0] border-r-2 border-[#18261C]/35 rounded-l-xl shadow-xl"
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-                <div className="border border-dashed border-[#18261C]/20 rounded-xl flex-1 my-4" />
-              </div>
-            </motion.div>
-          </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* ================= MOBILE / TABLET BOOK VIEW (< lg) ================= */}

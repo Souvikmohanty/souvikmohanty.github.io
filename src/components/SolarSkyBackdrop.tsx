@@ -16,13 +16,13 @@ export function SolarSkyBackdrop() {
   );
   const goldenOpacity = useTransform(
     scrollYProgress,
-    [0.48, 0.68, 0.82, 0.94],
+    [0.48, 0.66, 0.78, 0.9],
     [0, 0.88, 0.95, 0]
   );
   const eveningOpacity = useTransform(
     scrollYProgress,
-    [0.74, 0.86, 0.94, 1],
-    [0, 0.72, 1, 1]
+    [0.68, 0.8, 0.9, 1],
+    [0, 0.78, 1, 1]
   );
 
   // Pixel Sun orbital descent from high morning sky -> setting behind evening hills

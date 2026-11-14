@@ -16,7 +16,7 @@ export type BridgeVariant =
   | 'lab-to-library'
   | 'library-to-awards'
   | 'awards-to-album'
-  | 'album-to-contact';
+  | 'youtube-to-contact';
 
 const BRIDGE_META: Record<
   BridgeVariant,
@@ -61,7 +61,7 @@ const BRIDGE_META: Record<
     accentColor: '#E59A00',
     pillBorder: 'shadow-[4px_4px_0_#E59A00]',
   },
-  'album-to-contact': {
+  'youtube-to-contact': {
     chapterTag: '05',
     kicker: 'ARRIVING AT THE RESEARCHER OUTPOST',
     title: 'Final Stop · Collaborate & Say Hello',
@@ -356,8 +356,8 @@ export function ChapterBridge({ variant }: { variant: BridgeVariant }) {
             </>
           )}
 
-          {/* Photo Book -> Contact */}
-          {variant === 'album-to-contact' && (
+          {/* YouTube -> Contact */}
+          {variant === 'youtube-to-contact' && (
             <>
               <motion.div
                 style={{ x: runnerX, y: bobWaveY }}

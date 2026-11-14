@@ -29,6 +29,11 @@ const PhotoBookSection = lazy(() =>
     default: m.PhotoBookSection,
   }))
 );
+const YouTubeSection = lazy(() =>
+  import('./components/YouTubeSection').then((m) => ({
+    default: m.YouTubeSection,
+  }))
+);
 const ContactSection = lazy(() =>
   import('./components/ContactSection').then((m) => ({
     default: m.ContactSection,
@@ -126,7 +131,11 @@ export default function App() {
             <PhotoBookSection />
           </Suspense>
 
-          <ChapterBridge variant="album-to-contact" />
+          <Suspense fallback={<SectionAnchorFallback id="youtube" />}>
+            <YouTubeSection />
+          </Suspense>
+
+          <ChapterBridge variant="youtube-to-contact" />
 
           <Suspense fallback={<SectionAnchorFallback id="contact" />}>
             <ContactSection onOpenCv={handleOpenCv} />

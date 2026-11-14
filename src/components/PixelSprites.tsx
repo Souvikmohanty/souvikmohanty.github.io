@@ -705,3 +705,200 @@ export function PixelPatentSealIcon({ className = 'w-10 h-10' }: { className?: s
     </svg>
   );
 }
+
+/**
+ * Clean recognizable YouTube logo mark with crisp white play triangle.
+ */
+export function YouTubeLogoIcon({ className = 'w-8 h-6' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 36 26" className={className} aria-hidden="true">
+      <rect x="1" y="1" width="34" height="24" rx="7" fill="#FF0000" />
+      <polygon points="14,7.5 14,18.5 24,13" fill="#FFFFFF" />
+    </svg>
+  );
+}
+
+/**
+ * 16-bit pixel-art vignette of casual Souvik (sunglasses, open amber overshirt, charcoal tee,
+ * denim jeans & crimson sneakers) sitting at a sleek studio desk, actively working and editing
+ * YouTube videos on his open glowing laptop.
+ */
+export function PixelLaptopSouvik({
+  workPhase = false,
+  className = '',
+}: {
+  workPhase?: boolean;
+  className?: string;
+}) {
+  return (
+    <svg
+      viewBox="0 0 96 72"
+      className={`pixel-render ${className}`}
+      role="img"
+      aria-label="Small pixel character of Souvik in casual clothes and sunglasses working on his laptop"
+      shapeRendering="crispEdges"
+    >
+      {/* Ground shadow under chair and desk */}
+      <rect x="11" y="66" width="74" height="3" fill="#18261C" fillOpacity="0.35" />
+      <rect x="15" y="68" width="66" height="1" fill="#18261C" fillOpacity="0.2" />
+
+      {/* ============ STUDIO SWIVEL CHAIR (LEFT) ============ */}
+      <rect x="12" y="23" width="6" height="17" fill="#18261C" />
+      <rect x="13" y="24" width="4" height="15" fill="#334155" />
+      <rect x="13" y="24" width="1" height="14" fill="#475569" />
+      <rect x="14" y="40" width="2" height="7" fill="#1E293B" />
+      <rect x="14" y="44" width="20" height="5" fill="#18261C" />
+      <rect x="15" y="45" width="18" height="3" fill="#334155" />
+      <rect x="15" y="45" width="18" height="1" fill="#475569" />
+      <rect x="23" y="49" width="3" height="12" fill="#334155" />
+      <rect x="24" y="49" width="1" height="12" fill="#64748B" />
+      <rect x="17" y="61" width="15" height="2" fill="#18261C" />
+      <rect x="18" y="61" width="13" height="1" fill="#475569" />
+      <rect x="16" y="63" width="3" height="3" fill="#0F172A" />
+      <rect x="23" y="63" width="3" height="3" fill="#0F172A" />
+      <rect x="30" y="63" width="3" height="3" fill="#0F172A" />
+
+      {/* ============ SOUVIK SEATED LEGS (UNDER DESK) ============ */}
+      <rect x="18" y="40" width="18" height="5" fill="#18261C" />
+      <rect x="19" y="41" width="16" height="3" fill="#35537D" />
+      <rect x="20" y="41" width="14" height="1" fill="#4D74A8" />
+      <rect x="31" y="43" width="6" height="19" fill="#18261C" />
+      <rect x="32" y="43" width="4" height="18" fill="#35537D" />
+      <rect x="32" y="44" width="2" height="16" fill="#4D74A8" />
+      <rect x="31" y="61" width="10" height="5" fill="#18261C" />
+      <rect x="32" y="62" width="7" height="2" fill="#D32F2F" />
+      <rect x="32" y="64" width="8" height="1" fill="#FFFDF7" />
+      <rect x="38" y="63" width="2" height="1" fill="#FFFDF7" />
+
+      {/* ============ MINIMAL STUDIO DESK ============ */}
+      <rect x="39" y="50" width="3" height="16" fill="#18261C" />
+      <rect x="40" y="50" width="1" height="15" fill="#64748B" />
+      <rect x="81" y="50" width="3" height="16" fill="#18261C" />
+      <rect x="82" y="50" width="1" height="15" fill="#64748B" />
+      <rect x="36" y="47" width="51" height="4" fill="#18261C" />
+      <rect x="37" y="48" width="49" height="1" fill="#A1887F" />
+      <rect x="37" y="49" width="49" height="1" fill="#6D4C41" />
+
+      {/* ============ OPEN 3/4 PIXEL LAPTOP ON DESK ============ */}
+      <rect x="42" y="44" width="23" height="4" fill="#18261C" />
+      <rect x="43" y="45" width="21" height="2" fill="#CBD5E1" />
+      <rect x="45" y="44" width="14" height="2" fill="#334155" />
+      <rect x="46" y="44" width="2" height="1" fill="#94A3B8" />
+      <rect x="50" y="44" width="3" height="1" fill="#94A3B8" />
+      <rect x="55" y="44" width="2" height="1" fill="#94A3B8" />
+
+      {/* Screen lid angled up in 3/4 view facing Souvik */}
+      <rect x="62" y="20" width="16" height="6" fill="#18261C" />
+      <rect x="61" y="26" width="16" height="6" fill="#18261C" />
+      <rect x="60" y="32" width="16" height="6" fill="#18261C" />
+      <rect x="59" y="38" width="16" height="7" fill="#18261C" />
+
+      <rect x="63" y="21" width="14" height="5" fill="#475569" />
+      <rect x="62" y="26" width="14" height="6" fill="#475569" />
+      <rect x="61" y="32" width="14" height="6" fill="#475569" />
+      <rect x="60" y="38" width="14" height="6" fill="#475569" />
+      <rect x="77" y="21" width="1" height="5" fill="#94A3B8" />
+      <rect x="76" y="26" width="1" height="6" fill="#94A3B8" />
+      <rect x="75" y="32" width="1" height="6" fill="#94A3B8" />
+      <rect x="74" y="38" width="1" height="6" fill="#94A3B8" />
+
+      {/* Glowing dark screen display */}
+      <rect x="63" y="22" width="12" height="5" fill="#0F172A" />
+      <rect x="62" y="27" width="12" height="5" fill="#0F172A" />
+      <rect x="61" y="32" width="12" height="6" fill="#0F172A" />
+      <rect x="60" y="38" width="12" height="4" fill="#0F172A" />
+
+      {/* Mini YouTube video player & crisp white play triangle */}
+      <rect x="63" y="24" width="10" height="7" fill="#FF0000" />
+      <rect x="64" y="24" width="8" height="1" fill="#FF5252" />
+      <rect x="67" y="26" width="1" height="3" fill="#FFFFFF" />
+      <rect x="68" y="26" width="1" height="3" fill="#FFFFFF" />
+      <rect x="69" y="27" width="1" height="1" fill="#FFFFFF" />
+
+      {/* Video editing timeline tracks + animated playhead */}
+      <rect x="62" y="34" width="9" height="2" fill="#FF4E45" />
+      <rect x="61" y="37" width="7" height="2" fill="#FFE066" />
+      <rect x="69" y="37" width="2" height="2" fill="#38BDF8" />
+      <g className="animate-pixel-playhead">
+        <rect x="63" y="33" width="1" height="8" fill="#FFFFFF" />
+        <rect x="62" y="33" width="3" height="1" fill="#FFE066" />
+      </g>
+
+      {/* Soft cyan screen glow reflected on keyboard */}
+      <rect x="49" y="45" width="9" height="1" fill="#7DD3FC" fillOpacity="0.35" />
+
+      {/* ============ STEAMING COFFEE MUG ON DESK ============ */}
+      <rect x="79" y="42" width="6" height="5" fill="#18261C" />
+      <rect x="80" y="43" width="4" height="3" fill="#FFFDF7" />
+      <rect x="80" y="44" width="4" height="1" fill="#E59A00" />
+      <rect x="85" y="43" width="1" height="3" fill="#FFFDF7" />
+      <g className="animate-pixel-steam">
+        <rect x="81" y="39" width="1" height="2" fill="#CBD5E1" />
+        <rect x="83" y="36" width="1" height="2" fill="#CBD5E1" />
+      </g>
+
+      {/* ============ SOUVIK TORSO, HEAD & TYPING ARMS ============ */}
+      {/* Back/left arm reaching seamlessly to keyboard */}
+      <rect x="29" y="30" width="7" height="5" fill="#18261C" />
+      <rect x="30" y="31" width="5" height="3" fill="#D48800" />
+      <rect x="34" y="34" width="6" height="7" fill="#18261C" />
+      <rect x="35" y="35" width="4" height="5" fill="#D48800" />
+      <rect x="37" y="39" width="8" height="4" fill="#18261C" />
+      <rect x="38" y="40" width="7" height="2" fill="#D48800" />
+      <g className="animate-pixel-type-left">
+        <rect x="44" y="41" width="4" height="3" fill="#18261C" />
+        <rect x="45" y="41" width="2" height="2" fill="#C98B5E" />
+      </g>
+
+      {/* Casual Amber-Mustard Overshirt over Charcoal Graphic Tee */}
+      <rect x="18" y="24" width="15" height="17" fill="#18261C" />
+      <rect x="19" y="25" width="13" height="15" fill="#E59A00" />
+      <rect x="20" y="25" width="11" height="3" fill="#F2B705" />
+      <rect x="29" y="26" width="4" height="13" fill="#263238" />
+      <rect x="31" y="30" width="2" height="2" fill="#FFE066" />
+
+      {/* Front/right arm reaching seamlessly onto keyboard */}
+      <rect x="23" y="29" width="6" height="10" fill="#18261C" />
+      <rect x="24" y="30" width="4" height="8" fill="#E59A00" />
+      <rect x="27" y="38" width="21" height="5" fill="#18261C" />
+      <rect x="28" y="39" width="20" height="3" fill="#F2B705" />
+      <g className="animate-pixel-type-right">
+        <rect x="47" y="41" width="5" height="3" fill="#18261C" />
+        <rect x="48" y="41" width="3" height="2" fill="#C98B5E" />
+      </g>
+
+      {/* Head (3/4 profile facing right toward glowing screen) */}
+      <rect x="21" y="10" width="14" height="6" fill="#18261C" />
+      <rect x="23" y="8" width="6" height="3" fill="#18261C" />
+      <rect x="19" y="12" width="4" height="6" fill="#18261C" />
+      <rect x="22" y="14" width="14" height="10" fill="#18261C" />
+
+      <rect x="22" y="11" width="12" height="4" fill="#241712" />
+      <rect x="24" y="9" width="5" height="2" fill="#241712" />
+      <rect x="20" y="13" width="3" height="4" fill="#241712" />
+      <rect x="25" y="10" width="4" height="1" fill="#4E3529" />
+
+      <rect x="23" y="14" width="12" height="9" fill="#C98B5E" />
+      <rect x="22" y="15" width="2" height="4" fill="#241712" />
+      <rect x="22" y="17" width="2" height="2" fill="#B87A4E" />
+      <rect x="26" y="21" width="9" height="2" fill="#2B1D16" />
+      <rect x="31" y="20" width="3" height="1" fill="#FFFDF7" />
+
+      {/* Cool dark sunglasses reflecting laptop screen glow */}
+      <rect x="24" y="16" width="13" height="3" fill="#18261C" />
+      <rect x="29" y="16" width="4" height="2" fill="#0F172A" />
+      <rect x="34" y="16" width="3" height="2" fill="#0F172A" />
+      <rect x="30" y="16" width="2" height="1" fill="#7DD3FC" />
+      <rect x="35" y="16" width="1" height="1" fill="#FFFFFF" />
+
+      {/* Optional subtle spark burst when clicked */}
+      {workPhase && (
+        <>
+          <rect x="65" y="16" width="1" height="2" fill="#FFE066" />
+          <rect x="69" y="15" width="1" height="2" fill="#7DD3FC" />
+          <rect x="73" y="17" width="2" height="1" fill="#FF4E45" />
+        </>
+      )}
+    </svg>
+  );
+}
