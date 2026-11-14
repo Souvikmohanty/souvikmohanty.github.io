@@ -24,6 +24,7 @@ function StuckPhotoPrint({
       onClick={() => onInspect(photo)}
       whileHover={{ scale: 1.03, rotate: 0, y: -3 }}
       whileTap={{ scale: 0.98 }}
+      data-cursor="Zoom photo"
       className={`group relative text-left bg-white p-1.5 pb-2.5 border-2 border-[#18261C] shadow-[3px_4px_0_rgba(24,38,28,0.22)] transition-shadow hover:shadow-[5px_6px_0_#E59A00] hover:z-10 cursor-pointer w-full ${
         photo.tiltClass
       } ${featured ? 'max-w-[190px] mx-auto' : ''}`}
@@ -265,6 +266,7 @@ export function PhotoBookSection() {
                   <button
                     type="button"
                     onClick={handleOpenBook}
+                    data-cursor="Open album"
                     className="group relative w-full h-full min-h-[450px] flex rounded-r-2xl rounded-l-md bg-[#23452A] border-3 border-[#18261C] shadow-[10px_12px_0_#18261C] overflow-hidden cursor-pointer text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2E7D32]"
                     aria-label="Tap to open Souvik's Photo Book"
                   >

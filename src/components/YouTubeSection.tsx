@@ -49,6 +49,7 @@ export function YouTubeSection() {
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             whileHover={{ y: -3, scale: 1.03 }}
             whileTap={{ scale: 0.96 }}
+            data-cursor="Edit clip"
             className="relative cursor-pointer bg-transparent border-0 p-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FFE066]"
             aria-label="Tap Souvik working on his laptop"
           >
@@ -69,6 +70,7 @@ export function YouTubeSection() {
             transition={{ duration: 0.45, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
             whileHover={{ y: -3, scale: 1.03 }}
             whileTap={{ scale: 0.96 }}
+            data-cursor="Open YouTube"
             className="group inline-flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#161B2B] hover:bg-[#1E253B] text-[#FFFDF7] border-2 border-[#FFFDF7] shadow-[4px_4px_0_#FF0000] transition-colors cursor-pointer whitespace-nowrap shrink-0"
           >
             <span className="inline-flex items-center justify-center transition-transform duration-200 group-hover:scale-110">

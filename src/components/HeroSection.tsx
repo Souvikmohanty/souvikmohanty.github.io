@@ -70,6 +70,7 @@ export function HeroSection({ onStartWalk }: HeroSectionProps) {
               <button
                 type="button"
                 onClick={() => onStartWalk(-1)}
+                data-cursor="Start walk"
                 className="inline-flex items-center gap-2.5 px-6 py-3 text-sm sm:text-base font-bold text-[#18261C] bg-[#E59A00] hover:bg-[#F2B705] border-2 border-[#18261C] pixel-box-sm transition-transform active:translate-x-[2px] active:translate-y-[2px] whitespace-nowrap shrink-0 cursor-pointer"
               >
                 <span className="font-pixel text-base">Start the Field Walk</span>
@@ -158,6 +159,7 @@ export function HeroSection({ onStartWalk }: HeroSectionProps) {
                 onMouseEnter={() => setHeroNote('bee')}
                 onMouseLeave={() => setHeroNote('idle')}
                 onClick={() => onStartWalk(2)}
+                data-cursor="Inspect bee"
                 aria-label="Inspect stingless bee research"
                 className="absolute top-8 right-24 animate-bee-hover cursor-pointer p-1 focus-visible:outline-2 focus-visible:outline-[#18261C]"
               >
@@ -168,6 +170,7 @@ export function HeroSection({ onStartWalk }: HeroSectionProps) {
                 onMouseEnter={() => setHeroNote('bee')}
                 onMouseLeave={() => setHeroNote('idle')}
                 onClick={() => onStartWalk(2)}
+                data-cursor="Inspect bee"
                 aria-label="Inspect stingless bee research"
                 className="absolute top-16 right-8 animate-bee-hover cursor-pointer p-1 focus-visible:outline-2 focus-visible:outline-[#18261C]"
                 style={{ animationDelay: '0.85s' }}
@@ -209,6 +212,7 @@ export function HeroSection({ onStartWalk }: HeroSectionProps) {
                   onMouseEnter={() => setHeroNote('souvik')}
                   onMouseLeave={() => setHeroNote('idle')}
                   onClick={() => onStartWalk(0)}
+                  data-cursor="Walk trail"
                   aria-label="Start field walk with Souvik"
                   className="w-24 h-28 sm:w-28 sm:h-32 cursor-pointer transition-transform hover:-translate-y-1 shrink-0 focus-visible:outline-2 focus-visible:outline-[#18261C]"
                 >
@@ -240,6 +244,7 @@ export function HeroSection({ onStartWalk }: HeroSectionProps) {
                     onMouseEnter={() => setHeroNote('bee')}
                     onMouseLeave={() => setHeroNote('idle')}
                     onClick={() => onStartWalk(2)}
+                    data-cursor="Bamboo hives"
                     aria-label="Jump to bamboo hive research"
                     className="cursor-pointer transition-transform hover:-translate-y-1"
                   >
@@ -250,6 +255,7 @@ export function HeroSection({ onStartWalk }: HeroSectionProps) {
                     onMouseEnter={() => setHeroNote('bee')}
                     onMouseLeave={() => setHeroNote('idle')}
                     onClick={() => onStartWalk(3)}
+                    data-cursor="Mustard trials"
                     aria-label="Jump to mustard pollination trials"
                     className="hidden sm:block cursor-pointer transition-transform hover:-translate-y-1 -ml-3"
                   >

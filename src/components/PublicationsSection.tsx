@@ -111,6 +111,7 @@ function PublicationIndexEntry({
           <button
             type="button"
             onClick={() => onCopy(pub.id, pub.citationText)}
+            data-cursor="Copy citation"
             className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-bold text-[#18261C] bg-[#FFFDF7] hover:bg-[#FFE066] border-2 border-[#18261C] shadow-[3px_3px_0_#18261C] active:translate-x-[1px] active:translate-y-[1px] transition-all whitespace-nowrap shrink-0 cursor-pointer"
           >
             {isCopied ? (
@@ -131,6 +132,7 @@ function PublicationIndexEntry({
               href={pub.scholarUrl}
               target="_blank"
               rel="noopener noreferrer"
+              data-cursor="Open Scholar"
               className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-[#18261C] bg-white hover:bg-[#EEF5EA] border-2 border-[#18261C] transition-colors whitespace-nowrap shrink-0"
             >
               <span>Scholar</span>
@@ -141,6 +143,7 @@ function PublicationIndexEntry({
               href={pub.researchGateUrl}
               target="_blank"
               rel="noopener noreferrer"
+              data-cursor="Open ResearchGate"
               className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-[#18261C] bg-white hover:bg-[#EEF5EA] border-2 border-[#18261C] transition-colors whitespace-nowrap shrink-0"
             >
               <span>ResearchGate</span>

@@ -898,6 +898,7 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
                                   <button
                                     type="button"
                                     onClick={() => handleInspectClick(milestone)}
+                                    data-cursor="Inspect specimen"
                                     className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold text-[#18261C] bg-[#E59A00] hover:bg-[#F2B705] border-2 border-[#18261C] whitespace-nowrap shrink-0 cursor-pointer"
                                   >
                                     <Search className="w-3 h-3" aria-hidden="true" />
@@ -939,6 +940,7 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
                         <button
                           type="button"
                           onClick={() => handleInspectClick(milestone)}
+                          data-cursor="Inspect specimen"
                           className="group relative flex flex-col items-start cursor-pointer transition-transform hover:-translate-y-1 focus-visible:outline-2 focus-visible:outline-[#18261C]"
                           aria-label={`Inspect ${milestone.specimen.commonName}`}
                         >

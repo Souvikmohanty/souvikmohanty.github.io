@@ -330,6 +330,7 @@ export function ContactSection({ onOpenCv }: ContactSectionProps) {
               <button
                 type="button"
                 onClick={handleCopyEmail}
+                data-cursor="Copy email"
                 className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#FFFDF7] hover:bg-[#FFE066] border-2 border-[#18261C] shadow-[3px_3px_0_#18261C] transition-all cursor-pointer"
                 title="Copy email address"
               >
@@ -346,6 +347,7 @@ export function ContactSection({ onOpenCv }: ContactSectionProps) {
               <button
                 type="button"
                 onClick={onOpenCv}
+                data-cursor="View CV"
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold text-[#18261C] bg-[#E59A00] hover:bg-[#F2B705] border-2 border-[#18261C] shadow-[3px_3px_0_#18261C] active:translate-x-[1px] active:translate-y-[1px] transition-all cursor-pointer"
               >
                 <FileDown className="w-3.5 h-3.5" aria-hidden="true" />

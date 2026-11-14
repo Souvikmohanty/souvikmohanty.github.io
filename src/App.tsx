@@ -6,6 +6,7 @@ import { FieldWalkSection, STOP_DWELL_RANGES } from './components/FieldWalkSecti
 import { ChapterBridge } from './components/ChapterBridge';
 import { SolarSkyBackdrop } from './components/SolarSkyBackdrop';
 import { LoadingScreen } from './components/LoadingScreen';
+import { PixelCursor } from './components/PixelCursor';
 import { soundFx } from './utils/soundFx';
 import { FIELD_MILESTONES, type SpecimenDetail } from './data/portfolioData';
 
@@ -98,6 +99,7 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <LoadingScreen />
+      <PixelCursor />
       <div className="min-h-screen flex flex-col relative text-[#18261C]">
         <SolarSkyBackdrop />
         <Header onOpenCv={handleOpenCv} />
