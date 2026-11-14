@@ -120,7 +120,7 @@ export function ChapterBridge({ variant }: { variant: BridgeVariant }) {
       <div
         ref={bridgeRef}
         aria-hidden="true"
-        className="relative overflow-hidden bg-gradient-to-b from-[#E3F4FC]/70 via-[#E9F6FA]/55 to-[#CDE9D1]/70 pt-6 sm:pt-8 pb-0"
+        className="relative overflow-hidden bg-gradient-to-b from-[#E3F4FC]/70 via-[#E9F6FA]/55 to-[#CDE9D1]/70 pt-2.5 sm:pt-3.5 pb-0"
       >
         {/* Open-Air 3D Perspective Chapter Headline in the Sky */}
         <div

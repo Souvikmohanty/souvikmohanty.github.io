@@ -257,6 +257,8 @@ export function ContactSection({ onOpenCv }: ContactSectionProps) {
                   <img
                     src="./assets/souvik-profile-bw.jpg"
                     alt="Souvik Mohanty portrait"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover object-center grayscale contrast-110"
                   />
                 </div>

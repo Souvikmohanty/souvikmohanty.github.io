@@ -65,6 +65,7 @@ function StuckPhotoPrint({
           alt={photo.caption}
           referrerPolicy="no-referrer"
           loading="lazy"
+          decoding="async"
           className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${photo.objectPosition}`}
         />
         <span className="opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-1 right-1 bg-[#18261C]/85 text-[#FFFDF7] p-1 rounded">
@@ -478,6 +479,8 @@ export function PhotoBookSection() {
                           src={COVER_PREVIEW_PHOTO.src}
                           alt={COVER_PREVIEW_PHOTO.alt}
                           referrerPolicy="no-referrer"
+                          loading="lazy"
+                          decoding="async"
                           className={`w-full h-full object-cover ${COVER_PREVIEW_PHOTO.objectPosition}`}
                         />
                       </div>
@@ -549,6 +552,8 @@ export function PhotoBookSection() {
                           src={COVER_PREVIEW_PHOTO.src}
                           alt={COVER_PREVIEW_PHOTO.alt}
                           referrerPolicy="no-referrer"
+                          loading="lazy"
+                          decoding="async"
                           className={`w-full h-full object-cover ${COVER_PREVIEW_PHOTO.objectPosition}`}
                         />
                       </div>
@@ -686,6 +691,7 @@ export function PhotoBookSection() {
                 src={activeLightboxPhoto.src}
                 alt={activeLightboxPhoto.caption}
                 referrerPolicy="no-referrer"
+                decoding="async"
                 className="max-h-[68vh] w-auto object-contain"
               />
             </div>

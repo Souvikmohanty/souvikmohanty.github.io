@@ -6,7 +6,8 @@ interface LoadingScreenProps {
   onComplete?: () => void;
 }
 
-const LOADING_DURATION_MS = 1850;
+const LOADING_DURATION_MS = 900;
+const INTRO_SEEN_KEY = 'souvik-intro-seen';
 
 function getFieldStatus(progress: number): string {
   if (progress < 34) return 'Packing insect net & field notebook...';
@@ -16,24 +17,37 @@ function getFieldStatus(progress: number): string {
 }
 
 export function LoadingScreen({ onComplete }: LoadingScreenProps) {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    try {
+      return window.sessionStorage.getItem(INTRO_SEEN_KEY) !== '1';
+    } catch {
+      return true;
+    }
+  });
   const [progress, setProgress] = useState(0);
   const [stridePhase, setStridePhase] = useState<1 | 2>(1);
 
   const dismissLoader = () => {
+    try {
+      window.sessionStorage.setItem(INTRO_SEEN_KEY, '1');
+    } catch {
+      // Ignore storage failures in restricted contexts
+    }
     setVisible(false);
     onComplete?.();
   };
 
   // Smooth eased 0 -> 100 progress animation
   useEffect(() => {
+    if (!visible) return;
     const prefersReduced =
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (prefersReduced) {
       setProgress(100);
-      const quickTimer = window.setTimeout(dismissLoader, 250);
+      const quickTimer = window.setTimeout(dismissLoader, 160);
       return () => window.clearTimeout(quickTimer);
     }
 
@@ -52,7 +66,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
       if (raw < 1) {
         rafId = window.requestAnimationFrame(tick);
       } else {
-        finishTimer = window.setTimeout(dismissLoader, 280);
+        finishTimer = window.setTimeout(dismissLoader, 140);
       }
     };
 
@@ -62,7 +76,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
       window.cancelAnimationFrame(rafId);
       if (finishTimer !== null) window.clearTimeout(finishTimer);
     };
-  }, []);
+  }, [visible]);
 
   // Brisk 2-frame walk cycle while Souvik crosses the loading trail
   useEffect(() => {
@@ -74,6 +88,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
   }, [visible]);
 
   const statusText = getFieldStatus(progress);
+  const spriteOffsetPct = Math.min(92, Math.max(4, progress));
 
   return (
     <AnimatePresence>
@@ -83,7 +98,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
           initial={{ y: 0, opacity: 1 }}
           exit={{
             y: '-100%',
-            transition: { duration: 0.62, ease: [0.22, 1, 0.36, 1] },
+            transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
           }}
           role="status"
           aria-live="polite"
@@ -107,20 +122,22 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
 
             {/* Animated Character Walking Across the Progress Trail */}
             <div className="relative w-full pt-20 pb-3 mb-4">
-              {/* Moving Sprite Group: Buzzing Bee + Walking Souvik */}
+              {/* Moving Sprite Group: Buzzing Bee + Walking Souvik (GPU transform rail) */}
               <div
-                style={{ left: `${Math.min(92, Math.max(4, progress))}%` }}
-                className="absolute top-0 -translate-x-1/2 flex items-end pointer-events-none transition-[left] duration-75 ease-linear"
+                style={{ transform: `translate3d(${spriteOffsetPct}%, 0, 0)` }}
+                className="absolute top-0 inset-x-0 pointer-events-none will-change-transform"
               >
-                <div className="w-16 h-[74px] sm:w-[70px] sm:h-20">
-                  <PixelResearcher
-                    stridePhase={progress >= 100 ? 0 : stridePhase}
-                    isInspecting={progress >= 100}
-                    className="w-full h-full"
-                  />
-                </div>
-                <div className="animate-bee-hover -ml-2 mb-11">
-                  <PixelBeeIcon className="w-6 h-6" />
+                <div className="inline-flex items-end -translate-x-1/2">
+                  <div className="w-16 h-[74px] sm:w-[70px] sm:h-20">
+                    <PixelResearcher
+                      stridePhase={progress >= 100 ? 0 : stridePhase}
+                      isInspecting={progress >= 100}
+                      className="w-full h-full"
+                    />
+                  </div>
+                  <div className="animate-bee-hover -ml-2 mb-11">
+                    <PixelBeeIcon className="w-6 h-6" />
+                  </div>
                 </div>
               </div>
 
@@ -145,8 +162,11 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
               {/* Tactile 16-bit Progress Bar */}
               <div className="relative h-5 w-full bg-[#EAE4D1] border-2 border-[#18261C] shadow-[4px_4px_0_#18261C] overflow-hidden">
                 <div
-                  style={{ width: `${progress}%` }}
-                  className="h-full bg-gradient-to-r from-[#2E7D32] via-[#4CAF50] to-[#E59A00] transition-[width] duration-75 ease-linear relative"
+                  style={{
+                    transform: `scaleX(${progress / 100})`,
+                    transformOrigin: 'left center',
+                  }}
+                  className="w-full h-full bg-gradient-to-r from-[#2E7D32] via-[#4CAF50] to-[#E59A00] relative will-change-transform"
                 >
                   <span
                     aria-hidden="true"

@@ -108,6 +108,7 @@ export function SpecimenModal({
                     src={specimen.imageSrc}
                     alt={specimen.imageAlt}
                     referrerPolicy="no-referrer"
+                    decoding="async"
                     onError={() => setImgError(true)}
                     className={`w-full h-full ${
                       specimen.imageFit === 'contain' ? 'object-contain' : 'object-cover'
@@ -217,6 +218,8 @@ export function SpecimenModal({
                             src={photo.src}
                             alt={photo.caption}
                             referrerPolicy="no-referrer"
+                            loading="lazy"
+                            decoding="async"
                             className={`w-full h-full object-cover ${
                               photo.objectPosition ?? 'object-center'
                             }`}

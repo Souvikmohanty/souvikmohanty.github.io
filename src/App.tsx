@@ -1,27 +1,72 @@
-import { useState } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { MotionConfig } from 'motion/react';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { FieldWalkSection, STOP_DWELL_RANGES } from './components/FieldWalkSection';
-import { MastersResearchSection } from './components/MastersResearchSection';
-import { PublicationsSection } from './components/PublicationsSection';
-import { AwardsSection } from './components/AwardsSection';
-import { PhotoBookSection } from './components/PhotoBookSection';
-import { ContactSection } from './components/ContactSection';
 import { ChapterBridge } from './components/ChapterBridge';
 import { SolarSkyBackdrop } from './components/SolarSkyBackdrop';
 import { LoadingScreen } from './components/LoadingScreen';
-import { SpecimenModal } from './components/SpecimenModal';
-import { CvModal } from './components/CvModal';
 import { soundFx } from './utils/soundFx';
 import { FIELD_MILESTONES, type SpecimenDetail } from './data/portfolioData';
+
+const MastersResearchSection = lazy(() =>
+  import('./components/MastersResearchSection').then((m) => ({
+    default: m.MastersResearchSection,
+  }))
+);
+const PublicationsSection = lazy(() =>
+  import('./components/PublicationsSection').then((m) => ({
+    default: m.PublicationsSection,
+  }))
+);
+const AwardsSection = lazy(() =>
+  import('./components/AwardsSection').then((m) => ({
+    default: m.AwardsSection,
+  }))
+);
+const PhotoBookSection = lazy(() =>
+  import('./components/PhotoBookSection').then((m) => ({
+    default: m.PhotoBookSection,
+  }))
+);
+const ContactSection = lazy(() =>
+  import('./components/ContactSection').then((m) => ({
+    default: m.ContactSection,
+  }))
+);
+const SpecimenModal = lazy(() =>
+  import('./components/SpecimenModal').then((m) => ({
+    default: m.SpecimenModal,
+  }))
+);
+const CvModal = lazy(() =>
+  import('./components/CvModal').then((m) => ({
+    default: m.CvModal,
+  }))
+);
+
+function SectionAnchorFallback({ id }: { id: string }) {
+  return <div id={id} className="min-h-[360px]" aria-hidden="true" />;
+}
 
 export default function App() {
   const [selectedSpecimen, setSelectedSpecimen] = useState<{
     specimen: SpecimenDetail;
     milestoneTitle: string;
   } | null>(null);
+  const [specimenModalMounted, setSpecimenModalMounted] = useState(false);
   const [cvModalOpen, setCvModalOpen] = useState(false);
+  const [cvModalMounted, setCvModalMounted] = useState(false);
+
+  const handleOpenSpecimen = (specimen: SpecimenDetail, milestoneTitle: string) => {
+    setSpecimenModalMounted(true);
+    setSelectedSpecimen({ specimen, milestoneTitle });
+  };
+
+  const handleOpenCv = () => {
+    setCvModalMounted(true);
+    setCvModalOpen(true);
+  };
 
   const handleStartWalk = (stopIndex = -1) => {
     const fieldSection = document.getElementById('field-walk');
@@ -50,73 +95,67 @@ export default function App() {
       <LoadingScreen />
       <div className="min-h-screen flex flex-col relative text-[#18261C]">
         <SolarSkyBackdrop />
-        <Header onOpenCv={() => setCvModalOpen(true)} />
+        <Header onOpenCv={handleOpenCv} />
 
         <main className="relative z-10 flex-1">
           <HeroSection onStartWalk={handleStartWalk} />
 
           <ChapterBridge variant="hero-to-walk" />
 
-          <FieldWalkSection
-            onSelectSpecimen={(specimen, milestoneTitle) =>
-              setSelectedSpecimen({ specimen, milestoneTitle })
-            }
-          />
+          <FieldWalkSection onSelectSpecimen={handleOpenSpecimen} />
 
-          <MastersResearchSection />
+          <Suspense fallback={<SectionAnchorFallback id="masters-research" />}>
+            <MastersResearchSection />
+          </Suspense>
 
           <ChapterBridge variant="lab-to-library" />
 
-          <PublicationsSection />
+          <Suspense fallback={<SectionAnchorFallback id="publications" />}>
+            <PublicationsSection />
+          </Suspense>
 
           <ChapterBridge variant="library-to-awards" />
 
-          <AwardsSection />
+          <Suspense fallback={<SectionAnchorFallback id="awards" />}>
+            <AwardsSection />
+          </Suspense>
 
           <ChapterBridge variant="awards-to-album" />
 
-          <PhotoBookSection />
+          <Suspense fallback={<SectionAnchorFallback id="photo-book" />}>
+            <PhotoBookSection />
+          </Suspense>
 
           <ChapterBridge variant="album-to-contact" />
 
-          <ContactSection onOpenCv={() => setCvModalOpen(true)} />
+          <Suspense fallback={<SectionAnchorFallback id="contact" />}>
+            <ContactSection onOpenCv={handleOpenCv} />
+          </Suspense>
         </main>
 
-        <footer className="relative z-10 bg-[#181D30] text-[#E6DEC8] border-t-3 border-[#18261C] py-8">
-          <div className="max-w-[1160px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-[#CDE0CF]">
+        <footer className="relative z-10 bg-[#181D30] text-[#E6DEC8] border-t-3 border-[#18261C] py-6">
+          <div className="max-w-[1160px] mx-auto px-4 sm:px-6 text-center text-xs sm:text-sm text-[#CDE0CF]">
             <p className="font-medium text-[#FFFDF7]">
               © {new Date().getFullYear()} Souvik Mohanty · Agricultural Entomology, CAU Imphal
             </p>
-            <div className="flex items-center gap-5 font-semibold">
-              <a href="#top" className="hover:text-[#FFE066] transition-colors">
-                Top
-              </a>
-              <a href="#field-walk" className="hover:text-[#FFE066] transition-colors">
-                Field Walk
-              </a>
-              <a href="#publications" className="hover:text-[#FFE066] transition-colors">
-                Publications
-              </a>
-              <a href="#awards" className="hover:text-[#FFE066] transition-colors">
-                Awards
-              </a>
-              <a href="#photo-book" className="hover:text-[#FFE066] transition-colors">
-                Photo Book
-              </a>
-              <a href="#contact" className="hover:text-[#FFE066] transition-colors">
-                Contact
-              </a>
-            </div>
           </div>
         </footer>
 
-        <SpecimenModal
-          specimen={selectedSpecimen?.specimen ?? null}
-          milestoneTitle={selectedSpecimen?.milestoneTitle}
-          onClose={handleCloseSpecimen}
-        />
+        {specimenModalMounted && (
+          <Suspense fallback={null}>
+            <SpecimenModal
+              specimen={selectedSpecimen?.specimen ?? null}
+              milestoneTitle={selectedSpecimen?.milestoneTitle}
+              onClose={handleCloseSpecimen}
+            />
+          </Suspense>
+        )}
 
-        <CvModal isOpen={cvModalOpen} onClose={() => setCvModalOpen(false)} />
+        {cvModalMounted && (
+          <Suspense fallback={null}>
+            <CvModal isOpen={cvModalOpen} onClose={() => setCvModalOpen(false)} />
+          </Suspense>
+        )}
       </div>
     </MotionConfig>
   );

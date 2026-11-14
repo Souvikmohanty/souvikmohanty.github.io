@@ -527,6 +527,8 @@ function ChapterStage({
                     src={photo.src}
                     alt={photo.caption}
                     referrerPolicy="no-referrer"
+                    loading="lazy"
+                    decoding="async"
                     className={`w-full h-full object-cover ${
                       photo.objectPosition ?? 'object-center'
                     }`}
@@ -561,6 +563,7 @@ export function MastersResearchSection() {
   const lastClimbSoundRef = useRef(0);
   const lastStationRef = useRef(0);
   const burrowChimePlayedRef = useRef(false);
+  const isClimbingRef = useRef(false);
 
   // Scroll-linked descent through the subterranean burrow diorama
   const { scrollYProgress: dropProgress } = useScroll({
@@ -582,7 +585,10 @@ export function MastersResearchSection() {
   const mobileWalkerY = useTransform(expeditionProgress, [0, 1], [0, 8]);
 
   const triggerClimb = (latest?: number) => {
-    setIsClimbing(true);
+    if (!isClimbingRef.current) {
+      isClimbingRef.current = true;
+      setIsClimbing(true);
+    }
     const now = Date.now();
     if (
       (latest === undefined || (latest > 0.02 && latest < 0.98)) &&
@@ -595,6 +601,7 @@ export function MastersResearchSection() {
       window.clearTimeout(climbTimeoutRef.current);
     }
     climbTimeoutRef.current = window.setTimeout(() => {
+      isClimbingRef.current = false;
       setIsClimbing(false);
     }, 150);
   };

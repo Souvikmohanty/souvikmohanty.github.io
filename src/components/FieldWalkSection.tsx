@@ -256,6 +256,11 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
   const lastArrivedRef = useRef<number | null>(null);
   const lastJumpedHurdleRef = useRef<number | null>(null);
   const lastStepSoundRef = useRef(0);
+  const lastDistanceRef = useRef(0);
+  const isJumpingRef = useRef(false);
+  const lastHudStopRef = useRef(-1);
+  const isWalkingRef = useRef(false);
+  const showHelloRef = useRef(true);
 
   // Randomize hurdle types (stones, insects, logs, pots), horizontal placements, and jump heights
   const randomizedHurdles = useMemo(() => {
@@ -347,11 +352,18 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
 
   useMotionValueEvent(scrollYProgress, 'change', (latest) => {
     const clamped = Math.min(1, Math.max(0, latest));
-    setDistanceMeters(Math.round(clamped * 600));
+    const steppedMeters = Math.round(clamped * 120) * 5;
+    if (steppedMeters !== lastDistanceRef.current) {
+      lastDistanceRef.current = steppedMeters;
+      setDistanceMeters(steppedMeters);
+    }
 
     // Hide Hello chat bubble as soon as the visitor scrolls into the trail
     if (clamped > 0.015) {
-      setShowHello(false);
+      if (showHelloRef.current) {
+        showHelloRef.current = false;
+        setShowHello(false);
+      }
       if (helloTimeoutRef.current !== null) {
         window.clearTimeout(helloTimeoutRef.current);
         helloTimeoutRef.current = null;
@@ -366,7 +378,11 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
         break;
       }
     }
-    setIsJumping(jumpingHurdle !== null);
+    const nextJumping = jumpingHurdle !== null;
+    if (nextJumping !== isJumpingRef.current) {
+      isJumpingRef.current = nextJumping;
+      setIsJumping(nextJumping);
+    }
     if (jumpingHurdle !== null) {
       if (lastJumpedHurdleRef.current !== jumpingHurdle) {
         lastJumpedHurdleRef.current = jumpingHurdle;
@@ -389,7 +405,10 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
       }
     }
 
-    setHudStop(closestHudStop);
+    if (closestHudStop !== lastHudStopRef.current) {
+      lastHudStopRef.current = closestHudStop;
+      setHudStop(closestHudStop);
+    }
 
     // Pop the milestone box & play the arrival SFX on the EXACT same frame
     if (matchedStop !== lastArrivedRef.current) {
@@ -402,7 +421,10 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
 
     // Only walk & play footstep SFX when moving between stops (not while dwelling at a stop!)
     if (matchedStop === null && clamped > 0.025) {
-      setIsWalking(true);
+      if (!isWalkingRef.current) {
+        isWalkingRef.current = true;
+        setIsWalking(true);
+      }
       const now = Date.now();
       if (jumpingHurdle === null && now - lastStepSoundRef.current > 210) {
         lastStepSoundRef.current = now;
@@ -412,11 +434,16 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
         window.clearTimeout(walkTimeoutRef.current);
       }
       walkTimeoutRef.current = window.setTimeout(() => {
+        isWalkingRef.current = false;
         setIsWalking(false);
       }, 150);
     } else {
-      setIsWalking(false);
-      if (clamped <= 0.015) {
+      if (isWalkingRef.current) {
+        isWalkingRef.current = false;
+        setIsWalking(false);
+      }
+      if (clamped <= 0.015 && !showHelloRef.current) {
+        showHelloRef.current = true;
         setShowHello(true);
       }
       if (walkTimeoutRef.current !== null) {
@@ -469,12 +496,14 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
   const handleCharacterPoke = () => {
     soundFx.playToggleOn();
     setIdleBeat((prev) => (prev + 1) % 4);
+    showHelloRef.current = true;
     setShowHello(true);
     if (helloTimeoutRef.current !== null) {
       window.clearTimeout(helloTimeoutRef.current);
     }
     if (hudStop >= 0) {
       helloTimeoutRef.current = window.setTimeout(() => {
+        showHelloRef.current = false;
         setShowHello(false);
       }, 2000);
     }
@@ -803,10 +832,10 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
                   className="h-full relative"
                   style={{ width: `${100 / TOTAL_PANELS}%` }}
                 >
-                  {/* Milestone Prop placed at left-[34%] right next to Souvik's hand lens */}
-                  <div className="absolute bottom-[65px] left-[32%] sm:left-[33%] right-4 flex flex-col items-start">
+                  {/* Milestone Prop placed cleanly right next to Souvik's hand lens */}
+                  <div className="absolute bottom-[65px] left-[24%] sm:left-[33%] right-3 sm:right-4 flex flex-col items-start">
                     {/* Pop-up Retro Quest Plaque (strictly synchronized with dwell arrival!) */}
-                    <div className="mb-2 min-h-[150px] flex items-end">
+                    <div className="mb-2 min-h-[150px] flex items-end w-full">
                       <AnimatePresence>
                         {isArrived && (
                           <motion.article
@@ -819,7 +848,7 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
                               stiffness: 460,
                               damping: 26,
                             }}
-                            className="relative w-[236px] sm:w-[360px] bg-[#FFFDF7] border-2 border-[#18261C] pixel-box"
+                            className="relative w-full max-w-[260px] sm:max-w-[360px] bg-[#FFFDF7] border-2 border-[#18261C] pixel-box"
                           >
                             {/* Two-Tone Header Strip */}
                             <div
@@ -981,7 +1010,7 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
           </motion.div>
 
           {/* Interactive Fixed-in-frame Pixel Researcher with Hello Bubble & Hurdle Jump Physics */}
-          <div className="absolute bottom-[65px] left-[8%] sm:left-[22%] z-20 flex flex-col items-center">
+          <div className="absolute bottom-[65px] left-[4%] sm:left-[22%] z-20 flex flex-col items-center">
             {/* Dynamic ground shadow that shrinks cleanly while Souvik jumps */}
             <motion.div
               aria-hidden="true"
