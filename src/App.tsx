@@ -107,7 +107,7 @@ export default function App() {
         <main className="relative z-10 flex-1">
           <HeroSection onStartWalk={handleStartWalk} />
 
-          <ChapterBridge variant="hero-to-walk" />
+          <div aria-hidden="true" className="h-5 sm:h-7" />
 
           <FieldWalkSection onSelectSpecimen={handleOpenSpecimen} />
 

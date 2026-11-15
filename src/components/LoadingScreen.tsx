@@ -88,7 +88,6 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
   }, [visible]);
 
   const statusText = getFieldStatus(progress);
-  const spriteOffsetPct = Math.min(92, Math.max(4, progress));
 
   return (
     <AnimatePresence>
@@ -121,13 +120,16 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
             </h2>
 
             {/* Animated Character Walking Across the Progress Trail */}
-            <div className="relative w-full pt-20 pb-3 mb-4">
-              {/* Moving Sprite Group: Buzzing Bee + Walking Souvik (GPU transform rail) */}
+            <div className="relative w-full pt-20 pb-3 mb-4 text-left">
+              {/* Moving Sprite Group: Travels strictly from left edge to right edge of the progress bar */}
               <div
-                style={{ transform: `translate3d(${spriteOffsetPct}%, 0, 0)` }}
-                className="absolute top-0 inset-x-0 pointer-events-none will-change-transform"
+                style={{ transform: `translate3d(${progress}%, 0, 0)` }}
+                className="absolute top-0 left-0 w-full pointer-events-none will-change-transform"
               >
-                <div className="inline-flex items-end -translate-x-1/2">
+                <div
+                  style={{ transform: `translate3d(-${progress}%, 0, 0)` }}
+                  className="inline-flex items-end will-change-transform"
+                >
                   <div className="w-16 h-[74px] sm:w-[70px] sm:h-20">
                     <PixelResearcher
                       stridePhase={progress >= 100 ? 0 : stridePhase}
@@ -135,7 +137,7 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
                       className="w-full h-full"
                     />
                   </div>
-                  <div className="animate-bee-hover -ml-2 mb-11">
+                  <div className="animate-bee-hover -ml-3 mb-11">
                     <PixelBeeIcon className="w-6 h-6" />
                   </div>
                 </div>

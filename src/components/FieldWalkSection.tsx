@@ -36,9 +36,9 @@ interface FieldWalkSectionProps {
 
 const TOTAL_PANELS = FIELD_MILESTONES.length + 1; // Panel 0 = Trailhead, Panels 1..6 = Milestones
 
-// Piecewise dwell curve: character walks between stops and pauses right beside each landmark
+// Piecewise dwell curve: character breaks into a run almost immediately after landing and pauses beside each landmark
 const WALK_KEYFRAMES_INPUT = [
-  0.0, 0.03,
+  0.0, 0.008,
   0.12, 0.19,
   0.28, 0.35,
   0.44, 0.51,
@@ -88,7 +88,7 @@ const WALK_MIDGROUND_OUTPUT = [
 ];
 
 const WALK_SEGMENTS: Array<[number, number]> = [
-  [0.03, 0.12],
+  [0.008, 0.12],
   [0.19, 0.28],
   [0.35, 0.44],
   [0.51, 0.6],
@@ -359,7 +359,7 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
     }
 
     // Hide Hello chat bubble as soon as the visitor scrolls into the trail
-    if (clamped > 0.015) {
+    if (clamped > 0.004) {
       if (showHelloRef.current) {
         showHelloRef.current = false;
         setShowHello(false);
@@ -419,14 +419,14 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
       }
     }
 
-    // Only walk & play footstep SFX when moving between stops (not while dwelling at a stop!)
-    if (matchedStop === null && clamped > 0.025) {
+    // Only run & play footstep SFX when moving between stops (begins immediately after landing!)
+    if (matchedStop === null && clamped > 0.004) {
       if (!isWalkingRef.current) {
         isWalkingRef.current = true;
         setIsWalking(true);
       }
       const now = Date.now();
-      if (jumpingHurdle === null && now - lastStepSoundRef.current > 210) {
+      if (jumpingHurdle === null && now - lastStepSoundRef.current > 185) {
         lastStepSoundRef.current = now;
         soundFx.playStep();
       }
@@ -442,7 +442,7 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
         isWalkingRef.current = false;
         setIsWalking(false);
       }
-      if (clamped <= 0.015 && !showHelloRef.current) {
+      if (clamped <= 0.004 && !showHelloRef.current) {
         showHelloRef.current = true;
         setShowHello(true);
       }
@@ -453,7 +453,7 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
     }
   });
 
-  // 2-frame pixel stride cycle while walking
+  // Brisk 2-frame pixel running stride cycle while moving along the trail
   useEffect(() => {
     if (!isWalking) {
       setStrideTick(false);
@@ -461,7 +461,7 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
     }
     const timer = window.setInterval(() => {
       setStrideTick((prev) => !prev);
-    }, 125);
+    }, 95);
     return () => window.clearInterval(timer);
   }, [isWalking]);
 
@@ -547,7 +547,7 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
         className="sticky top-16 h-[calc(100vh-4rem)] w-full overflow-hidden flex flex-col justify-between bg-[#CDEAF8]/20 border-b-4 border-[#18261C]"
       >
         {/* ================= FIELD HUD BAR ================= */}
-        <div className="relative z-30 bg-[#FFFDF7] border-b-3 border-[#18261C] px-3 sm:px-6 py-2.5">
+        <div className="relative z-30 bg-[#FFFDF7] border-t-2 border-b-3 border-[#18261C] px-3 sm:px-6 py-2.5">
           <div className="max-w-[1160px] mx-auto flex items-center justify-between gap-3 sm:gap-5">
             {/* Active Milestone & Distance */}
             <div className="flex items-center gap-2.5 min-w-0">
@@ -1057,11 +1057,19 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
                 )}
               </AnimatePresence>
 
-              <button
+              <motion.button
                 type="button"
                 onClick={handleCharacterPoke}
+                animate={{
+                  rotate: isWalking && !isJumping ? 3 : 0,
+                }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 420,
+                  damping: 24,
+                }}
                 aria-label="Say hello to Souvik and toggle magnifying glass"
-                className="w-20 h-24 sm:w-24 sm:h-28 cursor-pointer focus-visible:outline-2 focus-visible:outline-[#18261C] bg-transparent border-0 p-0"
+                className="w-20 h-24 sm:w-24 sm:h-28 origin-bottom cursor-pointer focus-visible:outline-2 focus-visible:outline-[#18261C] bg-transparent border-0 p-0"
               >
                 <PixelResearcher
                   stridePhase={stridePhase}
@@ -1069,7 +1077,7 @@ export function FieldWalkSection({ onSelectSpecimen }: FieldWalkSectionProps) {
                   isJumping={isJumping}
                   className="w-full h-full"
                 />
-              </button>
+              </motion.button>
             </motion.div>
           </div>
 

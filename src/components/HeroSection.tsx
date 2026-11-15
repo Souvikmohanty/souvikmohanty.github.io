@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowDown, ArrowUpRight, ChevronRight } from 'lucide-react';
-import { FIELD_MILESTONES } from '../data/portfolioData';
+import { ArrowDown, ArrowUpRight } from 'lucide-react';
 import { PixelBeeIcon, PixelResearcher, PixelStopProp } from './PixelSprites';
 
 interface HeroSectionProps {
@@ -16,11 +15,12 @@ export function HeroSection({ onStartWalk }: HeroSectionProps) {
       id="top"
       className="relative overflow-x-clip bg-transparent"
     >
-      {/* Subtle Distant Pixel Hills across lower horizon */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-[58px] sm:bottom-[52px] h-28 sm:h-36 overflow-hidden opacity-85"
-      >
+      <div className="relative">
+        {/* Subtle Distant Pixel Hills across lower horizon */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-28 sm:h-36 overflow-hidden opacity-85"
+        >
         <svg
           viewBox="0 0 1200 140"
           preserveAspectRatio="none"
@@ -267,8 +267,9 @@ export function HeroSection({ onStartWalk }: HeroSectionProps) {
           </motion.div>
         </div>
       </div>
+      </div>
 
-      {/* Continuous Ground Turf + Soil Band + Minimalist Chapter Index */}
+      {/* Continuous Ground Turf + Soil Ledge */}
       <div className="relative z-20 w-full">
         {/* Pixel Grass Turf with Flowers & Soil Edge */}
         <div className="h-4 bg-[#4CAF50] border-t-3 border-[#18261C] relative overflow-hidden" aria-hidden="true">
@@ -278,121 +279,7 @@ export function HeroSection({ onStartWalk }: HeroSectionProps) {
             ))}
           </div>
         </div>
-        <div className="h-2.5 bg-[#543B28] border-b-2 border-[#18261C]" aria-hidden="true" />
-
-        {/* Open-Air Field Walk Trail Index (all 6 stops seated uniformly on warm paper) */}
-        <div className="bg-[#FFFDF7]">
-          <div className="max-w-[1160px] mx-auto px-4 sm:px-6 pt-4 pb-2.5 sm:pt-4 sm:pb-2.5">
-            {/* Mobile / Tablet section header */}
-            <div className="flex items-baseline justify-between gap-2 mb-3 lg:hidden">
-              <span className="font-pixel text-sm text-[#18261C] tracking-wide">
-                Field Trail Stops
-              </span>
-              <span className="font-mono-tabular text-[11px] text-[#4C6050]">
-                Tap any stop
-              </span>
-            </div>
-
-            {/* Mobile (< sm): Spacious Vertical Dotted Trail Route */}
-            <div className="relative sm:hidden">
-              <div
-                aria-hidden="true"
-                className="absolute left-[9px] top-5 bottom-5 border-l-2 border-dotted border-[#18261C]/20 pointer-events-none"
-              />
-              <div className="divide-y divide-[#18261C]/10">
-                {FIELD_MILESTONES.map((stop, idx) => (
-                  <motion.button
-                    key={stop.id}
-                    type="button"
-                    onClick={() => onStartWalk(idx)}
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.28, delay: 0.035 * idx }}
-                    className="group relative z-10 w-full min-h-[46px] py-2.5 pl-1 pr-1 flex items-center justify-between gap-3 text-left cursor-pointer active:bg-[#2E7D32]/5 rounded-lg transition-colors"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <span
-                        aria-hidden="true"
-                        className={`w-3 h-3 rounded-full shrink-0 border border-[#FFFDF7] shadow-[0_0_0_2px_rgba(255,253,247,0.95)] ${
-                          stop.isNowStop
-                            ? 'bg-[#E59A00] ring-3 ring-[#FFE066]/75'
-                            : 'bg-[#2E7D32]'
-                        }`}
-                      />
-                      <span
-                        className={`font-mono-tabular text-xs font-bold shrink-0 ${
-                          stop.isNowStop ? 'text-[#B86800]' : 'text-[#2E7D32]'
-                        }`}
-                      >
-                        {stop.stepNumber}
-                      </span>
-                      <span className="font-pixel text-[15px] text-[#18261C] group-hover:text-[#2E7D32] transition-colors leading-snug">
-                        {stop.shortTitle}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 shrink-0 text-[#4C6050]">
-                      <span className="font-mono-tabular text-[11px]">
-                        {stop.eraLabel}
-                      </span>
-                      <ChevronRight
-                        className="w-3.5 h-3.5 text-[#2E7D32]/70 group-hover:translate-x-0.5 transition-transform"
-                        aria-hidden="true"
-                      />
-                    </div>
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-
-            {/* Tablet & Desktop (sm+): Horizontal / Grid Dotted Trail */}
-            <div className="relative hidden sm:grid sm:grid-cols-2 md:grid-cols-3 lg:flex lg:items-center lg:justify-between gap-x-6 gap-y-4">
-              {/* Subtle connecting dotted trail line across desktop */}
-              <div
-                aria-hidden="true"
-                className="hidden lg:block absolute left-3 right-3 top-1/2 -translate-y-1/2 border-t-2 border-dotted border-[#18261C]/20 pointer-events-none"
-              />
-
-              {FIELD_MILESTONES.map((stop, idx) => (
-                <motion.button
-                  key={stop.id}
-                  type="button"
-                  onClick={() => onStartWalk(idx)}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.04 * idx }}
-                  whileHover={{ x: 2 }}
-                  className="group relative z-10 flex items-center gap-2.5 text-left cursor-pointer py-1 lg:bg-[#FFFDF7]/85 lg:px-2 lg:rounded-full min-w-0"
-                >
-                  <span
-                    aria-hidden="true"
-                    className={`w-2.5 h-2.5 rounded-full shrink-0 transition-transform group-hover:scale-125 ${
-                      stop.isNowStop
-                        ? 'bg-[#E59A00] ring-3 ring-[#FFE066]/70'
-                        : 'bg-[#2E7D32]'
-                    }`}
-                  />
-                  <span
-                    className={`font-mono-tabular text-[11px] font-bold shrink-0 ${
-                      stop.isNowStop ? 'text-[#C67C00]' : 'text-[#2E7D32]'
-                    }`}
-                  >
-                    {stop.stepNumber}
-                  </span>
-                  <span className="font-pixel text-sm text-[#18261C] group-hover:text-[#2E7D32] group-hover:underline decoration-[#E59A00] decoration-2 underline-offset-4 truncate transition-colors">
-                    {stop.shortTitle}
-                  </span>
-                </motion.button>
-              ))}
-            </div>
-          </div>
-
-          {/* Smooth transition apron into the ChapterBridge sky below all 6 stops */}
-          <div
-            aria-hidden="true"
-            className="h-3.5 sm:h-4 bg-gradient-to-b from-[#FFFDF7] to-[#E3F4FC]/70"
-          />
-        </div>
+        <div className="h-2.5 bg-[#543B28] border-b-3 border-[#18261C]" aria-hidden="true" />
       </div>
     </section>
   );

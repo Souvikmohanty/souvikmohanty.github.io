@@ -603,7 +603,7 @@ export function PhotoBookSection() {
                 <span>Previous Page</span>
               </button>
 
-              <span className="font-mono-tabular text-xs sm:text-sm font-bold text-[#18261C]">
+              <span className="font-mono-tabular text-xs sm:text-sm font-bold text-[#18261C] bg-[#FFFDF7] px-3 py-1.5 border-2 border-[#18261C] shadow-[2px_2px_0_#18261C]">
                 Spread {currentSpread.spreadNumber} / 0{ALBUM_SPREADS.length}
               </span>
 

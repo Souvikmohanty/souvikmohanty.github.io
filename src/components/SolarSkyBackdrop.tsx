@@ -8,21 +8,23 @@ import { motion, useScroll, useTransform } from 'motion/react';
 export function SolarSkyBackdrop() {
   const { scrollYProgress } = useScroll();
 
-  // Compositor-only sky crossfade opacities
+  // Compositor-only sky crossfade opacities tuned to section scroll positions:
+  // Awards (~0.80) & PhotoBook (~0.91) stay in warm sunlit golden-apricot;
+  // YouTube (~0.94) & Contact (~0.99) transition cleanly into twilight sunset.
   const afternoonOpacity = useTransform(
     scrollYProgress,
-    [0, 0.24, 0.52, 0.72, 0.82],
-    [0, 0, 0.92, 0.8, 0]
+    [0, 0.24, 0.52, 0.74, 0.85],
+    [0, 0, 0.92, 0.85, 0]
   );
   const goldenOpacity = useTransform(
     scrollYProgress,
-    [0.48, 0.66, 0.78, 0.9],
-    [0, 0.88, 0.95, 0]
+    [0.58, 0.75, 0.912, 0.955],
+    [0, 0.88, 0.98, 0]
   );
   const eveningOpacity = useTransform(
     scrollYProgress,
-    [0.68, 0.8, 0.9, 1],
-    [0, 0.78, 1, 1]
+    [0.912, 0.936, 0.965, 1],
+    [0, 0.88, 1, 1]
   );
 
   // Pixel Sun orbital descent from high morning sky -> setting behind evening hills
@@ -31,13 +33,13 @@ export function SolarSkyBackdrop() {
   const sunScale = useTransform(scrollYProgress, [0, 0.75, 1], [1, 1.08, 1.24]);
 
   // Sun color stage opacities (Morning Gold -> Golden Amber -> Coral Sunset)
-  const amberSunOpacity = useTransform(scrollYProgress, [0.42, 0.65, 0.88], [0, 1, 0]);
-  const sunsetSunOpacity = useTransform(scrollYProgress, [0.72, 0.88, 1], [0, 1, 1]);
-  const sunsetHaloOpacity = useTransform(scrollYProgress, [0.68, 0.9, 1], [0, 0.85, 1]);
+  const amberSunOpacity = useTransform(scrollYProgress, [0.45, 0.7, 0.92], [0, 1, 0]);
+  const sunsetSunOpacity = useTransform(scrollYProgress, [0.85, 0.935, 1], [0, 1, 1]);
+  const sunsetHaloOpacity = useTransform(scrollYProgress, [0.84, 0.94, 1], [0, 0.85, 1]);
 
   // Evening twinkling pixel stars & horizon dusk hills
-  const starsOpacity = useTransform(scrollYProgress, [0.78, 0.9, 1], [0, 0.85, 1]);
-  const horizonHillsOpacity = useTransform(scrollYProgress, [0.8, 0.92, 1], [0, 0.75, 1]);
+  const starsOpacity = useTransform(scrollYProgress, [0.915, 0.945, 1], [0, 0.85, 1]);
+  const horizonHillsOpacity = useTransform(scrollYProgress, [0.92, 0.955, 1], [0, 0.75, 1]);
 
   return (
     <div

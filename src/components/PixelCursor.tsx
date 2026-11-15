@@ -163,6 +163,9 @@ export function PixelCursor() {
     const onPointerDown = (e: PointerEvent) => {
       if (e.pointerType !== 'mouse') return;
 
+      tagOn = false;
+      tag.style.opacity = '0';
+
       const gx = Math.floor(e.clientX / GRID_SIZE);
       const gy = Math.floor(e.clientY / GRID_SIZE);
       for (let k = 0; k < 9; k++) {

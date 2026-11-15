@@ -18,7 +18,7 @@ export function YouTubeSection() {
     <section
       id="youtube"
       aria-labelledby="youtube-heading"
-      className="relative py-8 sm:py-11 bg-gradient-to-b from-transparent via-[#231B3A]/45 to-[#1B1E38]/25 overflow-x-clip"
+      className="relative py-8 sm:py-11 bg-transparent overflow-x-clip"
     >
       <div className="max-w-[780px] mx-auto px-4 sm:px-6 text-center">
         {/* Compact Heading on Top */}
