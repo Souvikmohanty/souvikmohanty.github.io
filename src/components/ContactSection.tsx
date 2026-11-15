@@ -9,10 +9,10 @@ import {
   ArrowUpRight,
   Check,
   Copy,
+  Feather,
   FileDown,
   MapPin,
   Send,
-  Sparkles,
 } from 'lucide-react';
 import { RESEARCHER_PROFILE } from '../data/portfolioData';
 import { PixelBeeIcon } from './PixelSprites';
@@ -140,6 +140,7 @@ export function ContactSection({ onOpenCv }: ContactSectionProps) {
   const [selectedTopicId, setSelectedTopicId] = useState<string>(INQUIRY_TOPICS[0].id);
   const [subject, setSubject] = useState<string>(INQUIRY_TOPICS[0].subject);
   const [messageBody, setMessageBody] = useState<string>(INQUIRY_TOPICS[0].starter);
+  const [senderName, setSenderName] = useState<string>('');
 
   const { scrollYProgress: sectionEnter } = useScroll({
     target: sectionRef,
@@ -147,7 +148,7 @@ export function ContactSection({ onOpenCv }: ContactSectionProps) {
   });
 
   const leftSlideX = useTransform(sectionEnter, [0, 1], [-28, 0]);
-  const postcardRotate = useTransform(sectionEnter, [0, 1], [-4, -1]);
+  const postcardRotate = useTransform(sectionEnter, [0, 1], [-3.5, -1]);
   const postcardY = useTransform(sectionEnter, [0, 1], [44, 0]);
   const stageOpacity = useTransform(sectionEnter, [0, 0.45, 1], [0.3, 0.9, 1]);
   const beeFlyX = useTransform(sectionEnter, [0, 1], [-18, 4]);
@@ -158,6 +159,10 @@ export function ContactSection({ onOpenCv }: ContactSectionProps) {
     setSubject(topic.subject);
     setMessageBody(topic.starter);
   };
+
+  const formattedLetter = `Dear Souvik,\n\n${messageBody.trim()}\n\nWarmly,\n${
+    senderName.trim() || 'A fellow researcher'
+  }`;
 
   const handleCopyEmail = async () => {
     try {
@@ -172,7 +177,7 @@ export function ContactSection({ onOpenCv }: ContactSectionProps) {
   const handleCopyEmailAndNote = async () => {
     try {
       await navigator.clipboard.writeText(
-        `To: ${RESEARCHER_PROFILE.email}\nSubject: ${subject}\n\n${messageBody}`
+        `To: ${RESEARCHER_PROFILE.email}\nSubject: ${subject}\n\n${formattedLetter}`
       );
       setDraftCopied(true);
       window.setTimeout(() => setDraftCopied(false), 2200);
@@ -183,12 +188,12 @@ export function ContactSection({ onOpenCv }: ContactSectionProps) {
 
   const handleLaunchEmail = () => {
     setJustLaunched(true);
-    window.setTimeout(() => setJustLaunched(false), 1200);
+    window.setTimeout(() => setJustLaunched(false), 1400);
   };
 
   const mailtoHref = `mailto:${RESEARCHER_PROFILE.email}?subject=${encodeURIComponent(
     subject
-  )}&body=${encodeURIComponent(messageBody)}`;
+  )}&body=${encodeURIComponent(formattedLetter)}`;
 
   const scientificProfiles = [
     {
@@ -361,155 +366,262 @@ export function ContactSection({ onOpenCv }: ContactSectionProps) {
             </div>
           </motion.div>
 
-          {/* RIGHT: TILTED 3D AIRMAIL POSTCARD COMPOSER WITH PERFORATED PIXEL BEE STAMP */}
-          <div className="lg:col-span-7" style={{ perspective: '1200px' }}>
+          {/* RIGHT: FUN STATIONERY LETTER TUCKED INTO AN OPEN FIELD ENVELOPE */}
+          <div className="lg:col-span-7 pt-4" style={{ perspective: '1200px' }}>
             <motion.div
               style={{ rotate: postcardRotate, y: postcardY }}
               whileHover={{ rotate: 0, y: -4 }}
               transition={{ type: 'spring', stiffness: 220, damping: 20 }}
-              className="relative bg-[#FFFDF7] border-3 border-[#18261C] shadow-[10px_12px_0_#18261C] overflow-hidden"
+              className="relative"
             >
-              {/* Classic Diagonal Airmail Top & Bottom Ribbons */}
+              {/* Open Envelope Back Flap Peeking Behind Top of the Letter */}
               <div
                 aria-hidden="true"
-                className="h-2.5 w-full bg-[repeating-linear-gradient(135deg,#2E7D32_0px,#2E7D32_14px,#FFFDF7_14px,#FFFDF7_22px,#E59A00_22px,#E59A00_36px,#FFFDF7_36px,#FFFDF7_44px)] border-b-2 border-[#18261C]"
-              />
-
-              <div className="p-5 sm:p-7 relative">
-                {/* Perforated Postage Stamp Badge in Top-Right */}
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  <div>
-                    <p className="font-pixel text-xs text-[#2E7D32] flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-[#E59A00]" aria-hidden="true" />
-                      <span>FIELD DISPATCH POSTCARD</span>
-                    </p>
-                    <h3 className="text-xl sm:text-2xl font-bold text-[#18261C] tracking-tight mt-0.5">
-                      Send a Quick Note
-                    </h3>
-                  </div>
-
-                  {/* Pixel Stamp with Serrated Dashed Border */}
-                  <div className="hidden sm:flex flex-col items-center justify-center w-20 h-20 bg-[#F6F3E8] border-2 border-dashed border-[#18261C] p-1.5 rotate-3 shrink-0 shadow-[2px_2px_0_#E59A00]">
-                    <PixelBeeIcon className="w-8 h-8 animate-bee-hover" />
-                    <span className="font-mono-tabular text-[9px] font-bold text-[#18261C] tracking-tight mt-1">
-                      IMPHAL AIR
-                    </span>
-                  </div>
-                </div>
-
-                {/* Animated Topic Selector Strip */}
-                <div className="flex flex-wrap gap-2 mb-5">
-                  {INQUIRY_TOPICS.map((topic) => {
-                    const active = topic.id === selectedTopicId;
-                    return (
-                      <button
-                        key={topic.id}
-                        type="button"
-                        onClick={() => handleSelectTopic(topic)}
-                        className={`relative px-3.5 py-1.5 rounded-full text-xs font-bold border-2 border-[#18261C] transition-colors cursor-pointer ${
-                          active
-                            ? 'text-[#18261C]'
-                            : 'bg-[#F6F3E8] text-[#3B4E3F] hover:bg-white'
-                        }`}
-                      >
-                        {active && (
-                          <motion.span
-                            layoutId="contact-topic-pill"
-                            transition={{ type: 'spring', stiffness: 360, damping: 28 }}
-                            className="absolute inset-0 rounded-full bg-[#FFE066] -z-0"
-                          />
-                        )}
-                        <span className="relative z-10">{topic.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Postcard Ruled Lines Input Area */}
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={selectedTopicId}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.18 }}
-                    className="space-y-3 mb-5"
-                  >
-                    <div className="border-b-2 border-[#18261C]/20 pb-2">
-                      <label
-                        htmlFor="postcard-subject"
-                        className="font-mono-tabular text-[10px] font-bold text-[#2E7D32] uppercase mr-2"
-                      >
-                        RE:
-                      </label>
-                      <input
-                        id="postcard-subject"
-                        type="text"
-                        value={subject}
-                        onChange={(e) => setSubject(e.target.value)}
-                        className="w-full bg-transparent text-sm font-bold text-[#18261C] focus:outline-none placeholder:text-[#4C6050]/50"
-                      />
-                    </div>
-
-                    <div className="bg-[linear-gradient(transparent_27px,#18261C1A_28px)] bg-[length:100%_28px]">
-                      <label htmlFor="postcard-body" className="sr-only">
-                        Your message note
-                      </label>
-                      <textarea
-                        id="postcard-body"
-                        rows={3}
-                        value={messageBody}
-                        onChange={(e) => setMessageBody(e.target.value)}
-                        className="w-full bg-transparent text-sm text-[#2D3E31] leading-[28px] focus:outline-none resize-none"
-                      />
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-
-                {/* Launch Controls */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={handleCopyEmailAndNote}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold text-[#18261C] bg-[#F6F3E8] hover:bg-[#EAE4D1] border-2 border-[#18261C] transition-colors cursor-pointer"
-                  >
-                    {draftCopied ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-[#2E7D32]" aria-hidden="true" />
-                        <span>Draft Copied!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5" aria-hidden="true" />
-                        <span>Copy Draft</span>
-                      </>
-                    )}
-                  </button>
-
-                  <motion.a
-                    href={mailtoHref}
-                    onClick={handleLaunchEmail}
-                    whileHover={{ scale: 1.03, y: -2 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold text-white bg-[#2E7D32] hover:bg-[#256628] border-2 border-[#18261C] shadow-[4px_4px_0_#18261C]"
-                  >
-                    <motion.span
-                      animate={justLaunched ? { x: [0, 14, 0], y: [0, -10, 0] } : {}}
-                      transition={{ duration: 0.45 }}
-                      className="inline-flex"
-                    >
-                      <Send className="w-4 h-4" aria-hidden="true" />
-                    </motion.span>
-                    <span>Send via Email App</span>
-                  </motion.a>
-                </div>
+                className="mx-3 sm:mx-5 -mb-3 h-7 bg-[#E4CFA3] border-x-3 border-t-3 border-[#18261C] rounded-t-md shadow-[4px_0_0_#18261C] flex items-center justify-center"
+              >
+                <span className="font-mono-tabular text-[10px] font-bold tracking-widest uppercase text-[#5C4524]/80">
+                  ★ Field Post · CAU Imphal ★
+                </span>
               </div>
 
-              {/* Bottom Airmail Stripe */}
+              {/* Fun Translucent Green Washi Tape Holding Top-Left Corner */}
               <div
                 aria-hidden="true"
-                className="h-2 w-full bg-[repeating-linear-gradient(135deg,#2E7D32_0px,#2E7D32_14px,#FFFDF7_14px,#FFFDF7_22px,#E59A00_22px,#E59A00_36px,#FFFDF7_36px,#FFFDF7_44px)] border-t-2 border-[#18261C]"
+                className="absolute top-2 left-8 sm:left-12 z-30 w-16 h-5 bg-[#81C784]/85 border-x-2 border-dashed border-[#18261C]/50 -rotate-6 shadow-[1px_2px_0_rgba(24,38,28,0.18)] pointer-events-none"
               />
+
+              {/* Main Cotton Stationery Letter Sheet */}
+              <div className="relative z-10 bg-[#FFFDF5] border-3 border-[#18261C] shadow-[10px_12px_0_#18261C] overflow-hidden">
+                {/* Notebook Red Margin Rule */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-0 bottom-0 left-7 sm:left-10 w-[2px] bg-[#E57373]/40"
+                />
+
+                <div className="pl-11 pr-5 pt-6 pb-5 sm:pl-14 sm:pr-7 sm:pt-7 sm:pb-6 relative">
+                  {/* Letterhead Header + Ink Postmark & Perforated Bee Stamp */}
+                  <div className="flex items-start justify-between gap-4 pb-3.5 border-b-2 border-dashed border-[#18261C]/20 mb-4">
+                    <div>
+                      <p className="font-pixel text-xs text-[#2E7D32] flex items-center gap-1.5">
+                        <Feather className="w-3.5 h-3.5 text-[#E59A00]" aria-hidden="true" />
+                        <span>FIELD LETTER · IMPHAL</span>
+                      </p>
+                      <h3 className="font-pixel text-xl sm:text-2xl font-bold text-[#18261C] tracking-tight mt-0.5">
+                        Write Souvik a Letter
+                      </h3>
+                      <p className="font-mono-tabular text-[11px] text-[#4C6050] mt-0.5">
+                        To: <span className="font-bold text-[#18261C]">Souvik Mohanty</span> · Dept. of Entomology
+                      </p>
+                    </div>
+
+                    {/* Stamp + Circular Postmark Cluster */}
+                    <div className="hidden sm:flex items-center relative shrink-0 pt-0.5">
+                      {/* Circular Inked Postmark */}
+                      <svg
+                        viewBox="0 0 64 64"
+                        aria-hidden="true"
+                        className="w-14 h-14 -mr-5 -mt-1 text-[#2E7D32]/55 -rotate-12 pointer-events-none"
+                      >
+                        <circle cx="32" cy="32" r="26" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="4 3" />
+                        <circle cx="32" cy="32" r="18" fill="none" stroke="currentColor" strokeWidth="1.2" />
+                        <text x="32" y="29" textAnchor="middle" fill="currentColor" fontSize="6.5" fontWeight="700" fontFamily="monospace">
+                          IMPHAL
+                        </text>
+                        <text x="32" y="38" textAnchor="middle" fill="currentColor" fontSize="5.5" fontWeight="700" fontFamily="monospace">
+                          AIR MAIL
+                        </text>
+                      </svg>
+
+                      {/* Serrated Postage Stamp */}
+                      <div className="relative z-10 flex flex-col items-center justify-center w-[72px] h-[76px] bg-[#F6F3E8] border-2 border-dashed border-[#18261C] p-1.5 rotate-3 shadow-[2px_2px_0_#E59A00]">
+                        <PixelBeeIcon className="w-7 h-7 animate-bee-hover" />
+                        <span className="font-mono-tabular text-[8.5px] font-bold text-[#18261C] tracking-tight mt-1">
+                          2026 · BEE POST
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sticky Bookmark Tabs for Letter Topic */}
+                  <div className="flex flex-wrap items-center gap-2 mb-4">
+                    <span className="font-mono-tabular text-[10px] font-bold uppercase tracking-wider text-[#4C6050] mr-1">
+                      Topic:
+                    </span>
+                    {INQUIRY_TOPICS.map((topic) => {
+                      const active = topic.id === selectedTopicId;
+                      return (
+                        <button
+                          key={topic.id}
+                          type="button"
+                          onClick={() => handleSelectTopic(topic)}
+                          className={`relative px-3 py-1 text-xs font-bold border-2 border-[#18261C] transition-transform cursor-pointer ${
+                            active
+                              ? '-translate-y-0.5 text-[#18261C] shadow-[2px_2px_0_#18261C]'
+                              : 'bg-[#F6F3E8] text-[#3B4E3F] hover:bg-white'
+                          }`}
+                        >
+                          {active && (
+                            <motion.span
+                              layoutId="contact-topic-pill"
+                              transition={{ type: 'spring', stiffness: 360, damping: 28 }}
+                              className="absolute inset-0 bg-[#FFE066] -z-0"
+                            />
+                          )}
+                          <span className="relative z-10">{topic.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Ruled Cotton Stationery Body */}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={selectedTopicId}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.18 }}
+                      className="space-y-3 mb-4"
+                    >
+                      {/* Subject Line */}
+                      <div className="flex items-baseline gap-2 border-b-2 border-[#64B5F6]/35 pb-1.5">
+                        <label
+                          htmlFor="postcard-subject"
+                          className="font-mono-tabular text-[11px] font-bold text-[#2E7D32] uppercase shrink-0"
+                        >
+                          Re:
+                        </label>
+                        <input
+                          id="postcard-subject"
+                          type="text"
+                          value={subject}
+                          onChange={(e) => setSubject(e.target.value)}
+                          className="w-full bg-transparent text-sm font-bold text-[#18261C] focus:outline-none placeholder:text-[#4C6050]/50"
+                        />
+                      </div>
+
+                      {/* Salutation */}
+                      <p className="font-pixel text-sm font-bold text-[#18261C] pt-1">
+                        Dear Souvik,
+                      </p>
+
+                      {/* Lined Letter Paper Textarea */}
+                      <div className="bg-[linear-gradient(transparent_27px,#64B5F633_28px)] bg-[length:100%_28px]">
+                        <label htmlFor="postcard-body" className="sr-only">
+                          Your letter message
+                        </label>
+                        <textarea
+                          id="postcard-body"
+                          rows={3}
+                          value={messageBody}
+                          onChange={(e) => setMessageBody(e.target.value)}
+                          className="w-full bg-transparent text-sm text-[#2D3E31] leading-[28px] focus:outline-none resize-none"
+                        />
+                      </div>
+
+                      {/* Handwritten-Style Closing Signature */}
+                      <div className="flex flex-wrap items-baseline gap-2 pt-1 border-b border-dashed border-[#18261C]/25 pb-1.5">
+                        <label
+                          htmlFor="letter-signature"
+                          className="font-pixel text-sm font-bold text-[#18261C] shrink-0"
+                        >
+                          Warmly,
+                        </label>
+                        <input
+                          id="letter-signature"
+                          type="text"
+                          value={senderName}
+                          onChange={(e) => setSenderName(e.target.value)}
+                          placeholder="Your name or lab (optional)"
+                          className="flex-1 min-w-[160px] bg-transparent font-mono-tabular text-xs sm:text-sm font-bold text-[#2E7D32] placeholder:text-[#4C6050]/55 placeholder:font-normal focus:outline-none"
+                        />
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+
+                {/* Envelope Pocket Lip + Interactive Bee Wax Seal & Send Actions */}
+                <div className="relative bg-[#E9D7B4] border-t-3 border-[#18261C] px-5 sm:px-7 py-3.5">
+                  {/* Decorative Envelope Fold Diagonal Seams */}
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 -top-[1px] h-2 bg-gradient-to-b from-[#18261C]/10 to-transparent"
+                  />
+
+                  <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      {/* Playful Crimson/Amber Bee Wax Seal */}
+                      <motion.div
+                        animate={
+                          justLaunched
+                            ? { scale: [1, 1.25, 0.9, 1.05, 1], rotate: [0, -12, 10, 0] }
+                            : {}
+                        }
+                        transition={{ duration: 0.55 }}
+                        aria-hidden="true"
+                        className="hidden sm:flex w-10 h-10 rounded-full bg-[#C62828] border-2 border-[#18261C] shadow-[2px_3px_0_#18261C] items-center justify-center shrink-0"
+                        title="Field Bee Wax Seal"
+                      >
+                        <div className="w-7 h-7 rounded-full border border-dashed border-[#FFE066]/70 flex items-center justify-center">
+                          <PixelBeeIcon className="w-4 h-4" />
+                        </div>
+                      </motion.div>
+
+                      <button
+                        type="button"
+                        onClick={handleCopyEmailAndNote}
+                        data-cursor="Copy letter"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold text-[#18261C] bg-[#FFFDF5] hover:bg-[#FFE066] border-2 border-[#18261C] shadow-[2px_2px_0_#18261C] transition-colors cursor-pointer"
+                      >
+                        {draftCopied ? (
+                          <>
+                            <Check className="w-3.5 h-3.5 text-[#2E7D32]" aria-hidden="true" />
+                            <span>Letter Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5" aria-hidden="true" />
+                            <span>Copy Letter</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <AnimatePresence>
+                        {justLaunched && (
+                          <motion.span
+                            initial={{ opacity: 0, scale: 0.85, rotate: -6 }}
+                            animate={{ opacity: 1, scale: 1, rotate: -3 }}
+                            exit={{ opacity: 0 }}
+                            className="hidden sm:inline-block px-2 py-0.5 border-2 border-[#2E7D32] text-[#2E7D32] bg-[#FFFDF5] font-pixel text-[10px] font-bold tracking-wider"
+                          >
+                            DISPATCHED!
+                          </motion.span>
+                        )}
+                      </AnimatePresence>
+
+                      <motion.a
+                        href={mailtoHref}
+                        onClick={handleLaunchEmail}
+                        data-cursor="Send letter"
+                        whileHover={{ scale: 1.03, y: -2 }}
+                        whileTap={{ scale: 0.97 }}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold text-white bg-[#2E7D32] hover:bg-[#256628] border-2 border-[#18261C] shadow-[4px_4px_0_#18261C]"
+                      >
+                        <motion.span
+                          animate={justLaunched ? { x: [0, 14, 0], y: [0, -10, 0] } : {}}
+                          transition={{ duration: 0.45 }}
+                          className="inline-flex"
+                        >
+                          <Send className="w-4 h-4" aria-hidden="true" />
+                        </motion.span>
+                        <span>Seal &amp; Send Letter</span>
+                      </motion.a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         </motion.div>
