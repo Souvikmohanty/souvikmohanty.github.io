@@ -8,7 +8,7 @@ import {
   type PublicationItem,
   type PublicationTopic,
 } from '../data/portfolioData';
-import { PixelSuitedResearcher } from './PixelSprites';
+import { PixelInformalResearcher, type InformalHostPose } from './PixelSprites';
 
 const TOPICS: PublicationTopic[] = [
   'All',
@@ -274,17 +274,20 @@ export function PublicationsSection() {
   const [activeTopic, setActiveTopic] = useState<PublicationTopic>('All');
   const [abstractFilter, setAbstractFilter] = useState<AbstractFormat>('All');
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [wavePhase, setWavePhase] = useState(false);
+  const [hostPoseIndex, setHostPoseIndex] = useState(0);
 
-  // Suited Souvik waves joyfully as visitors scroll into the section
+  const HOST_POSES: InformalHostPose[] = ['wave', 'stand', 'thumbs-up', 'stand'];
+  const hostPose: InformalHostPose = hostInView ? HOST_POSES[hostPoseIndex % HOST_POSES.length] : 'stand';
+
+  // Informal Souvik greets visitors with a friendly wave & thumbs-up when scrolled into view
   useEffect(() => {
     if (!hostInView) {
-      setWavePhase(false);
+      setHostPoseIndex(0);
       return;
     }
     const interval = window.setInterval(() => {
-      setWavePhase((prev) => !prev);
-    }, 340);
+      setHostPoseIndex((prev) => (prev + 1) % 4);
+    }, 1350);
     return () => window.clearInterval(interval);
   }, [hostInView]);
 
@@ -359,8 +362,8 @@ export function PublicationsSection() {
                 />
               </motion.div>
 
-              <div className="w-20 h-[88px] sm:w-22 sm:h-24">
-                <PixelSuitedResearcher wavePhase={wavePhase} className="w-full h-full" />
+              <div className="w-20 h-[116px] sm:w-24 sm:h-[132px]">
+                <PixelInformalResearcher pose={hostPose} className="w-full h-full" />
               </div>
             </motion.div>
 

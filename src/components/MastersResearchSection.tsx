@@ -6,7 +6,7 @@ import {
   useScroll,
   useTransform,
 } from 'motion/react';
-import { ArrowDown, Layers, Microscope, Sun, Volume2, VolumeX } from 'lucide-react';
+import { ArrowRight, Layers, Microscope, Sun, Volume2, VolumeX } from 'lucide-react';
 import {
   DEVELOPMENT_BARS,
   FORAGING_SLOTS,
@@ -40,7 +40,11 @@ function StageSpecimenArt({ stage }: { stage: string }) {
   if (stage === 'Larva') {
     return (
       <svg viewBox="0 0 24 24" className="w-8 h-8 pixel-render" shapeRendering="crispEdges" aria-hidden="true">
-        {/* C-shaped creamy larva */}
+        {/* Outlined C-shaped creamy larva */}
+        <rect x="6" y="5" width="10" height="6" fill="#1E1B2A" />
+        <rect x="4" y="8" width="6" height="9" fill="#1E1B2A" />
+        <rect x="6" y="14" width="11" height="6" fill="#1E1B2A" />
+        <rect x="12" y="12" width="6" height="6" fill="#1E1B2A" />
         <rect x="7" y="6" width="8" height="4" fill="#FFF8E1" />
         <rect x="5" y="9" width="4" height="7" fill="#FFF8E1" />
         <rect x="7" y="15" width="9" height="4" fill="#FFE082" />
@@ -53,11 +57,15 @@ function StageSpecimenArt({ stage }: { stage: string }) {
   }
   return (
     <svg viewBox="0 0 24 24" className="w-8 h-8 pixel-render" shapeRendering="crispEdges" aria-hidden="true">
-      {/* Exarate pupa */}
+      {/* Outlined Exarate pupa */}
+      <rect x="7" y="3" width="10" height="6" fill="#1E1B2A" />
+      <rect x="6" y="8" width="12" height="9" fill="#1E1B2A" />
+      <rect x="7" y="16" width="10" height="5" fill="#1E1B2A" />
       <rect x="8" y="4" width="8" height="5" fill="#6D4C41" />
-      <rect x="9" y="6" width="2" height="2" fill="#18261C" />
-      <rect x="13" y="6" width="2" height="2" fill="#18261C" />
+      <rect x="9" y="6" width="2" height="2" fill="#1E1B2A" />
+      <rect x="13" y="6" width="2" height="2" fill="#1E1B2A" />
       <rect x="7" y="9" width="10" height="7" fill="#D7A449" />
+      <rect x="8" y="9" width="3" height="6" fill="#F2C879" />
       <rect x="8" y="16" width="8" height="4" fill="#A17233" />
       <rect x="10" y="11" width="4" height="2" fill="#FFFDF7" />
     </svg>
@@ -551,40 +559,41 @@ function ChapterStage({
    ============================================================================ */
 
 export function MastersResearchSection() {
-  const dropZoneRef = useRef<HTMLDivElement>(null);
+  const trailBridgeRef = useRef<HTMLDivElement>(null);
   const expeditionRef = useRef<HTMLDivElement>(null);
+
+  const MASTERS_WALK_FRAMES: ReadonlyArray<1 | 2 | 3 | 4> = [1, 3, 2, 4];
 
   const [activeChapterIdx, setActiveChapterIdx] = useState(0);
   const [isClimbing, setIsClimbing] = useState(false);
-  const [strideTick, setStrideTick] = useState(false);
+  const [walkStep, setWalkStep] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(() => soundFx.isEnabled());
 
   const climbTimeoutRef = useRef<number | null>(null);
   const lastClimbSoundRef = useRef(0);
   const lastStationRef = useRef(0);
-  const burrowChimePlayedRef = useRef(false);
   const isClimbingRef = useRef(false);
 
-  // Scroll-linked descent through the subterranean burrow diorama
-  const { scrollYProgress: dropProgress } = useScroll({
-    target: dropZoneRef,
+  // Simple scroll-driven forward walk across the campus bridge toward the M.Sc. Lab
+  const { scrollYProgress: trailProgress } = useScroll({
+    target: trailBridgeRef,
     offset: ['start 90%', 'end 35%'],
   });
-  const dropCharacterY = useTransform(dropProgress, [0, 1], [6, 132]);
-  const parallaxRootsX = useTransform(dropProgress, [0, 1], [-12, 12]);
-  const parallaxDoorX = useTransform(dropProgress, [0, 1], [12, -12]);
-  const parallaxBeesY = useTransform(dropProgress, [0, 1], [20, -18]);
+  const walkX = useTransform(trailProgress, [0, 0.45, 0.85, 1], ['20%', '43%', '64%', '69%']);
+  const walkY = useTransform(trailProgress, [0, 0.28, 0.5, 0.72, 1], [0, -9, -9, 0, -2]);
 
   // Scroll-linked vertical expedition progress through the 3 thesis chapters
   const { scrollYProgress: expeditionProgress } = useScroll({
     target: expeditionRef,
     offset: ['start 25%', 'end 75%'],
   });
-  const vineWalkerY = useTransform(expeditionProgress, [0, 1], [8, 290]);
+  const slideX = useTransform(expeditionProgress, [0, 0.35, 0.72, 1], [4, 18, 40, 62]);
+  const slideY = useTransform(expeditionProgress, [0, 0.35, 0.72, 1], [-2, 92, 198, 270]);
+  const slideRotate = useTransform(expeditionProgress, [0, 0.35, 0.78, 1], [5, 11, 7, 0]);
   const mobileWalkerX = useTransform(expeditionProgress, [0, 1], ['2%', '81%']);
   const mobileWalkerY = useTransform(expeditionProgress, [0, 1], [0, 8]);
 
-  const triggerClimb = (latest?: number) => {
+  const triggerStepMotion = (latest?: number, softStep = false) => {
     if (!isClimbingRef.current) {
       isClimbingRef.current = true;
       setIsClimbing(true);
@@ -595,7 +604,11 @@ export function MastersResearchSection() {
       now - lastClimbSoundRef.current > 220
     ) {
       lastClimbSoundRef.current = now;
-      soundFx.playClimbStep();
+      if (softStep) {
+        soundFx.playStep();
+      } else {
+        soundFx.playClimbStep();
+      }
     }
     if (climbTimeoutRef.current !== null) {
       window.clearTimeout(climbTimeoutRef.current);
@@ -606,28 +619,20 @@ export function MastersResearchSection() {
     }, 150);
   };
 
-  useMotionValueEvent(dropProgress, 'change', (latest) => {
-    triggerClimb(latest);
-    if (latest > 0.14 && latest < 0.85) {
-      if (!burrowChimePlayedRef.current) {
-        burrowChimePlayedRef.current = true;
-        soundFx.playBurrowEnter();
-      }
-    } else if (latest <= 0.05 || latest >= 0.96) {
-      burrowChimePlayedRef.current = false;
-    }
+  useMotionValueEvent(trailProgress, 'change', (latest) => {
+    triggerStepMotion(latest, true);
   });
   useMotionValueEvent(expeditionProgress, 'change', (latest) => {
-    triggerClimb(latest);
+    triggerStepMotion(latest, false);
   });
 
   useEffect(() => {
     if (!isClimbing) {
-      setStrideTick(false);
+      setWalkStep(0);
       return;
     }
     const timer = window.setInterval(() => {
-      setStrideTick((prev) => !prev);
+      setWalkStep((prev) => (prev + 1) % MASTERS_WALK_FRAMES.length);
     }, 125);
     return () => window.clearInterval(timer);
   }, [isClimbing]);
@@ -667,7 +672,9 @@ export function MastersResearchSection() {
     soundFx.setEnabled(next);
   };
 
-  const stridePhase: 0 | 1 | 2 = !isClimbing ? 0 : strideTick ? 1 : 2;
+  const stridePhase: 0 | 1 | 2 | 3 | 4 = !isClimbing
+    ? 0
+    : MASTERS_WALK_FRAMES[walkStep % MASTERS_WALK_FRAMES.length];
   const activeChapter = MASTERS_CHAPTERS[activeChapterIdx] ?? MASTERS_CHAPTERS[0];
   const stationIcons = [Microscope, Layers, Sun];
 
@@ -677,144 +684,237 @@ export function MastersResearchSection() {
       aria-labelledby="masters-research-heading"
       className="relative notebook-grid pb-10 overflow-x-clip"
     >
-      {/* ================= CREATIVE SUBTERRANEAN BURROW LADDER DROP ================= */}
+      {/* ================= SUNLIT CAMPUS BRIDGE -> M.SC. ENTOMOLOGY LAB ================= */}
       <div
-        ref={dropZoneRef}
-        className="relative bg-[#543B28] border-b-4 border-[#18261C] overflow-hidden"
+        ref={trailBridgeRef}
+        className="relative border-b-4 border-[#18261C] overflow-hidden bg-gradient-to-b from-transparent via-[#E5F2DF]/55 to-[#CBE2C1]/90"
       >
-        {/* Top soil grass-to-earth root fringe */}
-        <div
+        {/* Distant Manipur Foothills Silhouette (keeps descending Sun visible in SolarSkyBackdrop) */}
+        <svg
+          viewBox="0 0 1200 180"
+          preserveAspectRatio="none"
           aria-hidden="true"
-          className="h-4 w-full bg-[#3E2A1C] border-b-2 border-[#18261C] flex items-center justify-around"
+          className="absolute inset-x-0 bottom-4 w-full h-36 sm:h-44 pointer-events-none"
         >
-          {Array.from({ length: 18 }).map((_, i) => (
-            <div key={i} className="w-3 h-2 bg-[#2B1B11]" />
-          ))}
-        </div>
+          <polygon
+            points="0,180 0,98 110,68 230,96 380,48 530,90 690,44 850,86 1010,54 1140,80 1200,66 1200,180"
+            fill="#83BC7E"
+            fillOpacity="0.65"
+          />
+          <polygon
+            points="0,180 0,124 140,96 310,126 480,86 640,120 820,88 990,118 1130,96 1200,110 1200,180"
+            fill="#5C9D5B"
+            fillOpacity="0.78"
+          />
+          {/* Distant hillside campus trees */}
+          <rect x="276" y="88" width="12" height="24" fill="#3B7A43" fillOpacity="0.55" />
+          <rect x="578" y="84" width="14" height="24" fill="#3B7A43" fillOpacity="0.55" />
+          <rect x="920" y="88" width="12" height="22" fill="#3B7A43" fillOpacity="0.55" />
+        </svg>
 
-        <div className="max-w-[1160px] mx-auto px-4 sm:px-6 relative h-[270px] sm:h-[290px] grid grid-cols-12 items-stretch">
-          {/* LEFT SUBTERRANEAN DIORAMA: Hanging roots, embedded bamboo hive & pollen pots */}
-          <motion.div
-            style={{ x: parallaxRootsX }}
+        {/* Stage Content */}
+        <div className="max-w-[1160px] mx-auto px-4 sm:px-6 relative h-[244px] sm:h-[268px] flex items-end justify-between">
+          {/* LEFT: End of Field Walk Signpost + Field Crate & Net */}
+          <div
             aria-hidden="true"
-            className="hidden sm:flex col-span-4 flex-col justify-between py-6 pr-4 pointer-events-none"
+            className="relative z-10 flex items-end gap-3 pb-7 pointer-events-none"
           >
-            {/* Dangling Roots & Glowing Resin Stones */}
-            <div className="flex items-start gap-6">
-              <svg viewBox="0 0 40 36" className="w-16 h-14 pixel-render" shapeRendering="crispEdges">
-                <rect x="6" y="0" width="3" height="24" fill="#8D6E63" />
-                <rect x="9" y="10" width="6" height="2" fill="#8D6E63" />
-                <rect x="18" y="0" width="4" height="30" fill="#6D4C41" />
-                <rect x="22" y="16" width="8" height="2" fill="#6D4C41" />
-                <rect x="30" y="0" width="2" height="18" fill="#8D6E63" />
-              </svg>
-              <div className="bg-[#3E2A1C] border-2 border-[#18261C] px-3 py-2 text-[#FFF8E1] shadow-[3px_3px_0_#18261C]">
-                <p className="font-pixel text-[11px] text-[#FFE066]">UNDERGROUND NEST</p>
-                <p className="font-mono-tabular text-[10px] opacity-85">
-                  Entering IBDC Study Shaft
+            <div className="flex flex-col items-center">
+              <div className="bg-[#FFFDF7] border-2 border-[#18261C] px-2.5 py-1.5 shadow-[3px_3px_0_#18261C] text-left">
+                <p className="font-pixel text-[10px] sm:text-[11px] text-[#2E7D32] leading-tight">
+                  FIELD WALK COMPLETE
+                </p>
+                <p className="font-mono-tabular text-[10px] font-bold text-[#18261C] mt-0.5 flex items-center gap-1">
+                  <span>To M.Sc. Lab</span>
+                  <ArrowRight className="w-3 h-3 text-[#E59A00]" />
                 </p>
               </div>
+              <div className="w-2.5 h-10 bg-[#8D6E63] border-x-2 border-[#18261C]" />
             </div>
 
-            {/* Buried Bamboo Hive & Amber Honey Pots */}
-            <div className="flex items-end gap-4">
-              <svg viewBox="0 0 48 28" className="w-24 h-14 pixel-render" shapeRendering="crispEdges">
-                {/* Buried bamboo log segment */}
-                <rect x="2" y="8" width="44" height="14" fill="#A17233" />
-                <rect x="2" y="8" width="44" height="3" fill="#D7A449" />
-                <rect x="2" y="19" width="44" height="3" fill="#6D4C41" />
-                <rect x="14" y="8" width="2" height="14" fill="#6D4C41" />
-                <rect x="32" y="8" width="2" height="14" fill="#6D4C41" />
-                {/* Glowing honey pots inside */}
-                <rect x="19" y="12" width="4" height="5" fill="#F2B705" />
-                <rect x="25" y="13" width="4" height="4" fill="#FFE066" />
-              </svg>
-              <motion.div style={{ y: parallaxBeesY }} className="animate-bee-hover mb-4">
-                <PixelBeeIcon className="w-7 h-7" />
-              </motion.div>
-            </div>
-          </motion.div>
-
-          {/* CENTER CARVED LADDER SHAFT + DESCENDING SOUVIK */}
-          <div className="col-span-12 sm:col-span-4 flex flex-col items-center justify-between relative">
-            {/* Carved Lighter Earth Burrow Shaft */}
-            <div className="relative w-44 sm:w-48 h-full bg-[#362417] border-x-4 border-[#18261C] flex flex-col items-center">
-              {/* Top Wooden Trapdoor Sign */}
-              <div className="mt-3 z-20 px-3 py-1 bg-[#FFE066] border-2 border-[#18261C] shadow-[3px_3px_0_#18261C] font-pixel text-[11px] text-[#18261C] flex items-center gap-1.5 whitespace-nowrap">
-                <ArrowDown className="w-3 h-3" aria-hidden="true" />
-                <span>DOWN TO M.SC. LAB</span>
-                <ArrowDown className="w-3 h-3" aria-hidden="true" />
-              </div>
-
-              {/* Hanging Pixel Lanterns Left & Right */}
-              <div
-                aria-hidden="true"
-                className="absolute top-14 left-2.5 w-3 h-4 bg-[#F2B705] border border-[#18261C] shadow-[0_0_12px_rgba(242,183,5,0.7)]"
-              />
-              <div
-                aria-hidden="true"
-                className="absolute bottom-14 right-2.5 w-3 h-4 bg-[#F2B705] border border-[#18261C] shadow-[0_0_12px_rgba(242,183,5,0.7)]"
-              />
-
-              {/* Full-height Wooden Ladder */}
-              <div
-                aria-hidden="true"
-                className="w-11 flex-1 border-x-4 border-[#8D6E63] bg-[#6D4C41]/25 flex flex-col justify-evenly py-1 my-1"
-              >
-                {Array.from({ length: 8 }).map((_, idx) => (
-                  <div key={idx} className="h-1.5 w-full bg-[#A17233] border-y border-[#18261C]" />
-                ))}
-              </div>
-
-              {/* Descending Researcher & Stingless Bee Companion */}
-              <motion.div
-                style={{ y: dropCharacterY }}
-                className="absolute top-10 z-20 flex items-center gap-1 pointer-events-none"
-              >
-                <div className="w-16 h-20">
-                  <PixelResearcher
-                    stridePhase={stridePhase}
-                    isInspecting={false}
-                    className="w-full h-full"
-                  />
-                </div>
-                <div className="animate-bee-hover -mt-8">
-                  <PixelBeeIcon className="w-6 h-6" />
-                </div>
-              </motion.div>
-            </div>
+            <svg
+              viewBox="0 0 56 44"
+              className="hidden sm:block w-20 h-16 pixel-render shrink-0"
+              shapeRendering="crispEdges"
+            >
+              {/* Leaning sweep net */}
+              <rect x="34" y="8" width="3" height="32" fill="#1E1B2A" />
+              <rect x="35" y="9" width="1" height="30" fill="#C49B66" />
+              <rect x="31" y="2" width="11" height="8" fill="#1E1B2A" />
+              <rect x="32" y="3" width="9" height="6" fill="#E0F7FA" />
+              {/* Wooden field collection crate */}
+              <rect x="8" y="22" width="24" height="18" fill="#1E1B2A" />
+              <rect x="9" y="23" width="22" height="16" fill="#B68B60" />
+              <rect x="10" y="24" width="20" height="3" fill="#D4AA7D" />
+              <rect x="9" y="30" width="22" height="2" fill="#6D4C41" />
+              <rect x="15" y="23" width="2" height="16" fill="#8D6E63" />
+              <rect x="23" y="23" width="2" height="16" fill="#8D6E63" />
+              {/* Specimen jar sitting on crate */}
+              <rect x="14" y="13" width="9" height="9" fill="#1E1B2A" />
+              <rect x="15" y="14" width="7" height="2" fill="#E59A00" />
+              <rect x="15" y="16" width="7" height="5" fill="#E0F7FA" />
+              <rect x="17" y="18" width="3" height="2" fill="#2E7D32" />
+              {/* Wildflowers */}
+              <rect x="2" y="32" width="2" height="8" fill="#2E7D32" />
+              <rect x="1" y="29" width="4" height="3" fill="#FFE066" />
+            </svg>
           </div>
 
-          {/* RIGHT SUBTERRANEAN DIORAMA: Microscope Lab Doorway + Glowing Sign */}
-          <motion.div
-            style={{ x: parallaxDoorX }}
+          {/* CENTER STREAM & ARCHED BAMBOO FOOTBRIDGE + COBBLESTONE LAB PATH */}
+          <div
             aria-hidden="true"
-            className="hidden sm:flex col-span-4 flex-col justify-between items-end py-6 pl-4 pointer-events-none"
+            className="absolute inset-x-0 bottom-5 z-0 flex justify-center pointer-events-none"
           >
-            {/* Buried stones & rootlets */}
-            <div className="flex items-center gap-3">
-              <div className="w-6 h-4 bg-[#6D4C41] border-2 border-[#18261C]" />
-              <div className="w-10 h-5 bg-[#4E342E] border-2 border-[#18261C]" />
-              <div className="w-4 h-3 bg-[#8D6E63] border-2 border-[#18261C]" />
-            </div>
+            <svg
+              viewBox="0 0 380 54"
+              className="w-[340px] sm:w-[460px] h-14 sm:h-16 pixel-render"
+              shapeRendering="crispEdges"
+            >
+              {/* Loktak-style sparkling stream under footbridge */}
+              <rect x="76" y="42" width="128" height="12" fill="#1E1B2A" />
+              <rect x="78" y="44" width="124" height="10" fill="#4FC3F7" />
+              <rect x="86" y="46" width="26" height="2" fill="#B3E5FC" />
+              <rect x="148" y="48" width="32" height="2" fill="#B3E5FC" />
+              <rect x="116" y="45" width="8" height="4" fill="#2E7D32" />
 
-            {/* Subterranean Wooden Field Lab Doorway */}
-            <div className="flex items-end gap-4">
-              <div className="bg-[#FFFDF7] border-2 border-[#18261C] px-3 py-2 shadow-[4px_4px_0_#2E7D32]">
-                <p className="font-pixel text-xs text-[#2E7D32]">3 CHAPTERS AHEAD</p>
-                <p className="font-mono-tabular text-[10px] text-[#18261C]">
-                  Biology · Nesting · Foraging
-                </p>
-              </div>
-              <svg viewBox="0 0 32 36" className="w-16 h-18 pixel-render" shapeRendering="crispEdges">
-                {/* Warm glowing arched lab door */}
-                <rect x="4" y="4" width="24" height="32" fill="#2E7D32" />
-                <rect x="7" y="7" width="18" height="29" fill="#8D6E63" />
-                <rect x="10" y="11" width="12" height="10" fill="#FFE066" />
-                <rect x="21" y="24" width="2" height="3" fill="#F2B705" />
-              </svg>
+              {/* Arched wooden & bamboo footbridge */}
+              <rect x="72" y="34" width="136" height="8" fill="#1E1B2A" />
+              <rect x="86" y="29" width="108" height="7" fill="#1E1B2A" />
+              <rect x="74" y="36" width="132" height="4" fill="#B68B60" />
+              <rect x="88" y="31" width="104" height="5" fill="#D4AA7D" />
+              {/* Bridge railing posts & handrail */}
+              <rect x="80" y="20" width="4" height="16" fill="#1E1B2A" />
+              <rect x="81" y="21" width="2" height="14" fill="#8D6E63" />
+              <rect x="138" y="16" width="4" height="16" fill="#1E1B2A" />
+              <rect x="139" y="17" width="2" height="14" fill="#8D6E63" />
+              <rect x="196" y="20" width="4" height="16" fill="#1E1B2A" />
+              <rect x="197" y="21" width="2" height="14" fill="#8D6E63" />
+              <rect x="82" y="20" width="116" height="4" fill="#1E1B2A" />
+              <rect x="82" y="21" width="116" height="2" fill="#E59A00" />
+
+              {/* Stepping stones leading from bridge to CAU Imphal M.Sc. Lab steps */}
+              <rect x="216" y="40" width="22" height="8" fill="#1E1B2A" />
+              <rect x="218" y="41" width="18" height="5" fill="#90A4AE" />
+              <rect x="246" y="38" width="24" height="10" fill="#1E1B2A" />
+              <rect x="248" y="39" width="20" height="7" fill="#B0BEC5" />
+              <rect x="278" y="35" width="28" height="13" fill="#1E1B2A" />
+              <rect x="280" y="36" width="24" height="10" fill="#CFD8DC" />
+            </svg>
+          </div>
+
+          {/* SCROLL-LINKED FORWARD WALK: Walks steadily across bridge toward the M.Sc. Lab */}
+          <motion.div
+            style={{ left: walkX, y: walkY }}
+            aria-hidden="true"
+            className="absolute bottom-7 z-20 pointer-events-none"
+          >
+            <div className="w-16 h-20 sm:w-20 sm:h-24">
+              <PixelResearcher
+                stridePhase={stridePhase}
+                isInspecting={false}
+                emote="stand"
+                className="w-full h-full"
+              />
             </div>
           </motion.div>
+
+          {/* RIGHT: Sunlit CAU Imphal M.Sc. Entomology Lab Pavilion */}
+          <div
+            aria-hidden="true"
+            className="relative z-10 flex flex-col items-end pb-7 ml-auto pointer-events-none"
+          >
+            <div className="hidden sm:block bg-[#FFFDF7] border-2 border-[#18261C] px-3 py-1.5 shadow-[4px_4px_0_#2E7D32] mb-3.5">
+              <p className="font-pixel text-[11px] text-[#2E7D32]">M.SC. ENTOMOLOGY LAB</p>
+              <p className="font-mono-tabular text-[10px] text-[#18261C]">
+                3 Chapters: Biology · Nesting · Foraging
+              </p>
+            </div>
+
+              {/* 16-Bit CAU Imphal Entomology Research Pavilion */}
+              <svg
+                viewBox="0 0 112 96"
+                className="w-32 h-28 sm:w-44 sm:h-38 pixel-render shrink-0"
+                shapeRendering="crispEdges"
+              >
+              {/* Pitched Campus Roof + Finial */}
+              <rect x="52" y="4" width="6" height="8" fill="#1E1B2A" />
+              <rect x="53" y="5" width="4" height="6" fill="#E59A00" />
+              <rect x="14" y="18" width="84" height="10" fill="#1E1B2A" />
+              <rect x="26" y="12" width="60" height="8" fill="#1E1B2A" />
+              <rect x="6" y="26" width="100" height="10" fill="#1E1B2A" />
+
+              <rect x="28" y="14" width="56" height="6" fill="#2E7D32" />
+              <rect x="16" y="20" width="80" height="7" fill="#3B8C3F" />
+              <rect x="8" y="27" width="96" height="7" fill="#1F5A22" />
+              {/* Roof gold trim */}
+              <rect x="10" y="32" width="92" height="2" fill="#FFE066" />
+
+              {/* Cream Research Pavilion Walls */}
+              <rect x="12" y="34" width="88" height="58" fill="#1E1B2A" />
+              <rect x="14" y="36" width="84" height="54" fill="#FFF8E1" />
+              <rect x="14" y="36" width="84" height="4" fill="#E6DEC8" />
+
+              {/* Lab Header Signboard above Door */}
+              <rect x="34" y="38" width="44" height="11" fill="#1E1B2A" />
+              <rect x="35" y="39" width="42" height="9" fill="#FFE066" />
+              <rect x="39" y="42" width="34" height="3" fill="#18261C" />
+
+              {/* Glowing Left Arched Lab Window (Microscope silhouette inside!) */}
+              <rect x="18" y="48" width="20" height="22" fill="#1E1B2A" />
+              <rect x="20" y="50" width="16" height="18" fill="#FFD54F" />
+              <rect x="21" y="51" width="6" height="7" fill="#FFF9C4" />
+              {/* Silhouette Microscope inside lit window */}
+              <rect x="26" y="57" width="4" height="7" fill="#5D4037" />
+              <rect x="24" y="64" width="8" height="3" fill="#4E342E" />
+              <rect x="18" y="69" width="20" height="3" fill="#8D6E63" />
+
+              {/* Open Welcoming Lab Entrance Doorway */}
+              <rect x="44" y="53" width="24" height="37" fill="#1E1B2A" />
+              <rect x="46" y="55" width="20" height="35" fill="#F9A825" />
+              <rect x="48" y="57" width="16" height="33" fill="#FFF3B0" />
+              {/* Swung-open wooden door panel */}
+              <rect x="61" y="55" width="7" height="35" fill="#1E1B2A" />
+              <rect x="62" y="56" width="5" height="33" fill="#8D6E63" />
+              <rect x="63" y="70" width="2" height="3" fill="#FFE066" />
+
+              {/* Glowing Right Window + Specimen Shelf */}
+              <rect x="74" y="48" width="20" height="22" fill="#1E1B2A" />
+              <rect x="76" y="50" width="16" height="18" fill="#FFD54F" />
+              <rect x="77" y="51" width="6" height="7" fill="#FFF9C4" />
+              <rect x="81" y="58" width="5" height="7" fill="#2E7D32" />
+              <rect x="74" y="69" width="20" height="3" fill="#8D6E63" />
+
+              {/* Hanging Warm Porch Lantern */}
+              <rect x="40" y="49" width="4" height="6" fill="#1E1B2A" />
+              <rect x="41" y="50" width="2" height="4" fill="#FFF59D" />
+
+              {/* Stone Entrance Porch & Steps */}
+              <rect x="38" y="88" width="36" height="6" fill="#1E1B2A" />
+              <rect x="40" y="89" width="32" height="4" fill="#B0BEC5" />
+              {/* Potted Marigolds flanking porch */}
+              <rect x="18" y="82" width="10" height="10" fill="#1E1B2A" />
+              <rect x="19" y="83" width="8" height="8" fill="#A1887F" />
+              <rect x="20" y="76" width="6" height="6" fill="#2E7D32" />
+              <rect x="21" y="74" width="4" height="3" fill="#F2B705" />
+              <rect x="84" y="82" width="10" height="10" fill="#1E1B2A" />
+              <rect x="85" y="83" width="8" height="8" fill="#A1887F" />
+              <rect x="86" y="76" width="6" height="6" fill="#2E7D32" />
+              <rect x="87" y="74" width="4" height="3" fill="#FF8A65" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Continuous 16-Bit Meadow Turf Floor matching FieldWalkSection */}
+        <div aria-hidden="true" className="relative z-10 w-full">
+          <div className="h-4 w-full bg-[#53A344] border-t-2 border-[#18261C] flex items-start justify-around overflow-hidden">
+            {Array.from({ length: 28 }).map((_, i) => (
+              <div
+                key={i}
+                className="w-4 h-1.5 bg-[#76C85A] border-r border-[#3B7D31]/40"
+              />
+            ))}
+          </div>
+          <div className="h-3 w-full bg-[#3E7E35] border-t border-[#2E6227]" />
         </div>
       </div>
 
@@ -977,39 +1077,101 @@ export function MastersResearchSection() {
         className="max-w-[1160px] mx-auto px-4 sm:px-6 pb-20 sm:pb-24 pt-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-start">
-          {/* LEFT FLOATING BAMBOO-VINE VERTICAL TRAIL (No outer box!) */}
+          {/* LEFT 16-BIT WOODEN & BAMBOO EXPEDITION SLIDE */}
           <aside className="hidden md:block md:col-span-4 sticky top-28">
-            <div className="relative h-[400px] pl-2">
-              {/* Vertical Bamboo Stalk Track */}
-              <div
+            <div className="relative h-[400px] pl-1">
+              {/* 16-Bit Curved Wooden/Bamboo Playground Slide */}
+              <svg
+                viewBox="0 0 116 380"
                 aria-hidden="true"
-                className="absolute left-9 top-6 bottom-6 w-3.5 rounded-full bg-[#E6DEC8] border-2 border-[#18261C] overflow-hidden"
+                className="absolute left-0 top-2 w-[112px] h-[366px] pointer-events-none"
               >
-                <motion.div
-                  style={{ scaleY: expeditionProgress, originY: 0 }}
-                  className="w-full h-full bg-[#2E7D32]"
+                {/* Wooden back support ladder frame & top launch platform */}
+                <rect x="10" y="34" width="6" height="314" fill="#6D4C41" stroke="#1E1B2A" strokeWidth="2.5" />
+                <rect x="24" y="34" width="5" height="314" fill="#5D4037" stroke="#1E1B2A" strokeWidth="2.5" />
+                {/* Mid brace support post under slide */}
+                <rect x="52" y="180" width="6" height="168" fill="#5D4037" stroke="#1E1B2A" strokeWidth="2.5" />
+                <rect x="76" y="294" width="5" height="54" fill="#5D4037" stroke="#1E1B2A" strokeWidth="2.5" />
+                {/* Back step rungs */}
+                {[78, 128, 178, 228, 278, 326].map((ry) => (
+                  <rect
+                    key={ry}
+                    x="11"
+                    y={ry}
+                    width="17"
+                    height="5"
+                    fill="#A17233"
+                    stroke="#1E1B2A"
+                    strokeWidth="2"
+                  />
+                ))}
+                {/* Top launch deck & handrail */}
+                <path
+                  d="M 8 34 L 8 18 Q 8 14 14 14 L 30 14 Q 34 14 34 20 L 34 34"
+                  fill="none"
+                  stroke="#E59A00"
+                  strokeWidth="4"
+                  strokeLinecap="round"
                 />
-              </div>
+                <rect x="6" y="32" width="32" height="8" rx="2" fill="#C49B66" stroke="#1E1B2A" strokeWidth="2.5" />
 
-              {/* Animated Souvik + Bee Climbing Down the Open Vine */}
+                {/* Grassy cushions at slide base */}
+                <rect x="4" y="346" width="108" height="10" rx="4" fill="#4CAF50" stroke="#1E1B2A" strokeWidth="2.5" />
+                <rect x="12" y="348" width="90" height="3" fill="#74C365" />
+
+                {/* Slide Chute Dark Outline + Honey-Bamboo Chute Body */}
+                <path
+                  d="M 24 38 C 38 106, 58 206, 80 296 C 85 316, 94 330, 108 332"
+                  fill="none"
+                  stroke="#1E1B2A"
+                  strokeWidth="24"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M 24 38 C 38 106, 58 206, 80 296 C 85 316, 94 330, 108 332"
+                  fill="none"
+                  stroke="#C49B66"
+                  strokeWidth="19"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M 24 38 C 38 106, 58 206, 80 296 C 85 316, 94 330, 108 332"
+                  fill="none"
+                  stroke="#F6D58E"
+                  strokeWidth="12"
+                  strokeLinecap="round"
+                />
+
+                {/* Animated Emerald-Gold Trail lighting up behind Souvik as he slides */}
+                <motion.path
+                  d="M 24 38 C 38 106, 58 206, 80 296 C 85 316, 94 330, 108 332"
+                  fill="none"
+                  stroke="#2E7D32"
+                  strokeWidth="7"
+                  strokeLinecap="round"
+                  style={{ pathLength: expeditionProgress }}
+                  opacity="0.72"
+                />
+              </svg>
+
+              {/* Animated Souvik Sliding Down the Chute upon Scrolling */}
               <motion.div
-                style={{ y: vineWalkerY }}
-                className="absolute left-1 z-20 pointer-events-none flex items-start"
+                style={{ x: slideX, y: slideY, rotate: slideRotate }}
+                className="absolute left-0 top-0 z-20 pointer-events-none will-change-transform"
               >
                 <div className="w-16 h-20">
                   <PixelResearcher
-                    stridePhase={stridePhase}
-                    isInspecting={!isClimbing}
+                    stridePhase={0}
+                    climbPhase={0}
+                    isInspecting={false}
+                    emote="slide"
                     className="w-full h-full"
                   />
-                </div>
-                <div className="animate-bee-hover -ml-3 mt-1">
-                  <PixelBeeIcon className="w-5 h-5" />
                 </div>
               </motion.div>
 
               {/* 3 Floating Wooden Signpost Medallions */}
-              <div className="relative z-10 h-full flex flex-col justify-between pl-16 py-3">
+              <div className="relative z-10 h-full flex flex-col justify-between pl-28 py-3">
                 {MASTERS_CHAPTERS.map((ch, idx) => {
                   const Icon = stationIcons[idx] ?? Microscope;
                   const isCurrent = activeChapterIdx === idx;
@@ -1056,7 +1218,7 @@ export function MastersResearchSection() {
               </div>
             </div>
 
-            <div className="mt-4 pl-16 space-y-3">
+            <div className="mt-4 pl-28 space-y-3">
               <div>
                 <p className="font-mono-tabular text-[10px] font-bold text-[#4C6050] uppercase">
                   Exploring Station {activeChapter.stepNumber} / 03

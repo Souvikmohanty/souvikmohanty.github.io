@@ -25,8 +25,10 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
       return true;
     }
   });
+const LOADING_WALK_FRAMES: ReadonlyArray<1 | 2 | 3 | 4> = [1, 3, 2, 4];
+
   const [progress, setProgress] = useState(0);
-  const [stridePhase, setStridePhase] = useState<1 | 2>(1);
+  const [walkStep, setWalkStep] = useState(0);
 
   const dismissLoader = () => {
     try {
@@ -78,14 +80,16 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
     };
   }, [visible]);
 
-  // Brisk 2-frame walk cycle while Souvik crosses the loading trail
+  // Smooth 4-frame walk cycle while Souvik crosses the loading trail
   useEffect(() => {
     if (!visible) return;
     const interval = window.setInterval(() => {
-      setStridePhase((prev) => (prev === 1 ? 2 : 1));
-    }, 170);
+      setWalkStep((prev) => (prev + 1) % LOADING_WALK_FRAMES.length);
+    }, 115);
     return () => window.clearInterval(interval);
   }, [visible]);
+
+  const stridePhase = LOADING_WALK_FRAMES[walkStep % LOADING_WALK_FRAMES.length];
 
   const statusText = getFieldStatus(progress);
 
@@ -133,7 +137,8 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
                   <div className="w-16 h-[74px] sm:w-[70px] sm:h-20">
                     <PixelResearcher
                       stridePhase={progress >= 100 ? 0 : stridePhase}
-                      isInspecting={progress >= 100}
+                      isInspecting={false}
+                      emote={progress >= 100 ? 'thumbs-up' : 'stand'}
                       className="w-full h-full"
                     />
                   </div>
